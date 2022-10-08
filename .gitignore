@@ -33,3 +33,6 @@
 
 # WSL shit
 *:Zone.Identifier
+
+*.dtmp
+*.bkp
