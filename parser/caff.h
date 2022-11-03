@@ -31,9 +31,11 @@ struct CaffAnimation {
 } __attribute__((packed));
 
 CaffHeader caff_header(const char* buffer);
+CaffCredits caff_credits(const char* buffer);
 
+void check_interval(uint64_t x, uint64_t a, uint64_t b);
 // Convert bytes to int
-uint64_t bytes_to_int(const char* buffer, uint64_t start, uint64_t end);
-string bytes_to_string(const char* buffer, uint64_t start, uint64_t end);
+uint64_t bytes_to_int(const char* buffer, uint64_t start, uint64_t end, bool check = false, uint64_t condition = 0);
+string bytes_to_string(const char* buffer, uint64_t start, uint64_t end, bool check = false, string condition = "");
 
 #endif // CAFF_H
