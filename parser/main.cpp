@@ -22,6 +22,7 @@ int main(int argc, char **argv)
             ParsedInfo info = parser.parse_file(&file);
             cout << "header len:\t" << info.caff_header.header_size << endl;
             cout << "num anim:\t" << info.caff_header.num_anim << endl;
+            cout << "Credits:\t" << info.credits.toString() << endl;
         }
         catch (ParserException &e)
         {

@@ -42,6 +42,17 @@ private:
     {
         auto typ = read_block_type(file);
         len = read_block_len(file);
+        switch (typ)
+        {
+        case 1:
+            return CAFFBlockType::Header;
+        case 2:
+            return CAFFBlockType::Credits;
+        case 3:
+            return CAFFBlockType::Animation;
+        default:
+            return CAFFBlockType::WRONG;
+        }
     }
 
     inline char *next_block(std::ifstream *file, uint64_t len)

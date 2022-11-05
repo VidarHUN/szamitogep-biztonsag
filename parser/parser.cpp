@@ -3,6 +3,7 @@
 #include "caff.h"
 #include <iostream>
 #include <stdexcept>
+#include <ctime>
 
 // Ezzel kell majd vmit kezdeni mert elég hoszzúúúúú függvény
 ParsedInfo CAFFParser::parse_file(std::ifstream *file)
@@ -27,7 +28,6 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
         delete bytes;
         throw e;
     }
-    delete bytes;
 
     // El kellene dönteni, hogy:
     // a) csak a header után jöhet a credits, vagy
@@ -41,27 +41,28 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
     // if (typ != 2 && typ != 3)
     if (blk_type != CAFFBlockType::Credits)
         throw ParserException("Credits block must come after the header.");
+    delete bytes;
     bytes = next_block(file, blk_len);
     try
     {
         credits = parse_credits(bytes, blk_len);
     }
-    catch (ParserException &e)
+    catch (std::exception &e)
     {
         delete bytes;
         throw e;
     }
-    delete bytes;
 
     // Animation blocks
-    animation = new CaffAnimation[header.num_anim];
-    for (size_t i = 0; i < header.num_anim; i++)
-    {
-        /* code */
-    }
+    // animation = new CaffAnimation[header.num_anim];
+    // for (size_t i = 0; i < header.num_anim; i++)
+    // {
+    //     /* code */
+    // }
 
     ParsedInfo pi;
     pi.caff_header = header;
+    pi.credits = credits;
     return pi;
 }
 
@@ -80,10 +81,33 @@ CaffHeader CAFFParser::parse_header(char *bytes, uint64_t blk_len)
     }
     CaffHeader header;
     header.header_size = (uint32_t)(bytes[4]);
-    header.num_anim = (uint32_t)(*(bytes + 12));
+    header.num_anim = (uint32_t)(bytes[12]);
     return header;
 }
 
 CaffCredits CAFFParser::parse_credits(char *bytes, uint64_t blk_len)
 {
+    CaffCredits credits;
+    time_t now = time(0);
+    tm *ltm = localtime(&now);
+    try
+    {
+        credits.YY = (uint16_t)((uint8_t)(bytes[1]) << 8 | (uint8_t)(bytes[0]));
+        check_interval(credits.YY, 1900, 1900 + ltm->tm_year);
+        credits.M = (uint8_t)(bytes[2]);
+        check_interval(credits.M, 1, 12);
+        credits.D = (uint8_t)(bytes[3]);
+        check_interval(credits.D, 1, ltm->tm_mday);
+        credits.h = (uint8_t)(bytes[4]);
+        check_interval(credits.h, 0, 24);
+        credits.m = (uint8_t)(bytes[5]);
+        check_interval(credits.m, 0, 60);
+        auto creator_len = bytes_to_int(bytes, 6, 14);
+        credits.creator = "Sanyi";
+        return credits;
+    }
+    catch (std::invalid_argument &e)
+    {
+        throw;
+    }
 }
