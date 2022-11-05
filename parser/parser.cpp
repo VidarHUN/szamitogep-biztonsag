@@ -102,8 +102,8 @@ CaffCredits CAFFParser::parse_credits(char *bytes, uint64_t blk_len)
         check_interval(credits.h, 0, 24);
         credits.m = (uint8_t)(bytes[5]);
         check_interval(credits.m, 0, 60);
-        auto creator_len = bytes_to_int(bytes, 6, 14);
-        credits.creator = "Sanyi";
+        auto creator_len = (uint64_t)(bytes[6]);
+        credits.creator = bytes_to_string(bytes, 14, 14 + creator_len);
         return credits;
     }
     catch (std::invalid_argument &e)
