@@ -35,8 +35,18 @@ public:
     }
 
     ParsedInfo parse_file(std::ifstream *file);
-    CaffHeader parse_header(char *file, uint64_t blk_len);
+    CaffHeader parse_header(char *bytes, uint64_t blk_len);
     CaffCredits parse_credits(std::ifstream *file);
+    inline uint8_t read_block_type(std::ifstream *file)
+    {
+        file->read(buf1, 1);
+        return (uint8_t)(*buf1);
+    }
+    inline uint64_t read_block_len(std::ifstream *file)
+    {
+        file->read(buf8, 8);
+        return (uint64_t)(*buf8);
+    }
 };
 
 class ParserException : public std::exception

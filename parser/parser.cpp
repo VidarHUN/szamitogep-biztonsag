@@ -3,31 +3,22 @@
 #include "caff.h"
 #include <iostream>
 #include <stdexcept>
-#include <cassert>
 
 ParsedInfo CAFFParser::parse_file(std::ifstream *file)
 {
     // First block --> CAFF HEADER
-    file->read(buf1, 1);
-    uint8_t typ = (uint8_t)(*buf1);
-    assert(typ == 1);
-    file->read(buf8, 8);
-    uint64_t blk_size = (uint64_t)(*buf8);
-    char *header_bytes = new char[blk_size];
-    file->read(header_bytes, blk_size);
-    CaffHeader header;
-    try
-    {
-        header = parse_header(header_bytes, blk_size);
-    }
-    catch (ParserException &e)
-    {
-        std::cout << e.what() << std::endl;
-        exit(-1);
-    }
+    auto typ = read_block_type(file);
+    if (typ != 1)
+        throw ParserException("First block must be a valid CAFF header");
+    auto blk_len = read_block_len(file);
+    char *header_bytes = new char[blk_len];
+    file->read(header_bytes, blk_len);
+    auto header = parse_header(header_bytes, blk_len);
+
+    // Second block
+    typ = read_block_type(file);
+
     ParsedInfo pi;
-    pi.blk_info.type = typ;
-    pi.blk_info.length = blk_size;
     pi.caff_header = header;
     return pi;
 }

@@ -17,12 +17,19 @@ int main(int argc, char **argv)
     else
     {
         CAFFParser parser;
-        ParsedInfo info = parser.parse_file(&file);
-        cout << "blk type:\t" << (int)info.blk_info.type << endl;
-        cout << "blk len:\t" << info.blk_info.length << endl;
-        cout << "header len:\t" << info.caff_header.header_size << endl;
-        cout << "num anim:\t" << info.caff_header.num_anim << endl;
+        try
+        {
+            ParsedInfo info = parser.parse_file(&file);
+            cout << "header len:\t" << info.caff_header.header_size << endl;
+            cout << "num anim:\t" << info.caff_header.num_anim << endl;
+        }
+        catch (ParserException &e)
+        {
+            cout << e.what() << endl;
+            file.close();
+            return 1;
+        }
     }
-
+    file.close();
     return 0;
 }
