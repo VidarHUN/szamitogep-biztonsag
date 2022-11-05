@@ -36,7 +36,7 @@ public:
 
     ParsedInfo parse_file(std::ifstream *file);
     CaffHeader parse_header(char *bytes, uint64_t blk_len);
-    CaffCredits parse_credits(std::ifstream *file);
+    CaffCredits parse_credits(char *bytes, uint64_t blk_len);
     inline uint8_t read_block_type(std::ifstream *file)
     {
         file->read(buf1, 1);
