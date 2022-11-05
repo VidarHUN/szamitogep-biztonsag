@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include "caff.h"
+#include <stdexcept>
 
 struct BlockInfo
 {
@@ -38,4 +39,13 @@ public:
     CaffCredits parse_credits(std::ifstream *file);
 };
 
+class ParserException : public std::exception
+{
+private:
+    string msg;
+
+public:
+    ParserException(string s) : msg(s) {}
+    const char *what() { return msg.c_str(); }
+};
 #endif // PARSER_HPP

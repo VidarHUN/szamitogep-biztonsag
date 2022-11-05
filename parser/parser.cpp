@@ -2,17 +2,31 @@
 #include <cstring>
 #include "caff.h"
 #include <iostream>
+#include <stdexcept>
+#include <cassert>
 
 ParsedInfo CAFFParser::parse_file(std::ifstream *file)
 {
+    // First block --> CAFF HEADER
     file->read(buf1, 1);
+    uint8_t typ = (uint8_t)(*buf1);
+    assert(typ == 1);
     file->read(buf8, 8);
     uint64_t blk_size = (uint64_t)(*buf8);
     char *header_bytes = new char[blk_size];
     file->read(header_bytes, blk_size);
-    auto header = parse_header(header_bytes, blk_size);
+    CaffHeader header;
+    try
+    {
+        header = parse_header(header_bytes, blk_size);
+    }
+    catch (ParserException &e)
+    {
+        std::cout << e.what() << std::endl;
+        exit(-1);
+    }
     ParsedInfo pi;
-    pi.blk_info.type = (uint8_t)(*buf1);
+    pi.blk_info.type = typ;
     pi.blk_info.length = blk_size;
     pi.caff_header = header;
     return pi;
@@ -25,12 +39,11 @@ CaffHeader CAFFParser::parse_header(char *bytes, uint64_t blk_len)
 
     if ((int)*magic != (int)*_magic)
     {
-        std::cout << "WRONG MAGIC" << std::endl;
+        throw ParserException("WRONG CAFF MAGIC");
     }
     if ((uint32_t)(bytes[4]) != blk_len)
     {
-        std::cout << "WRONG LEN" << std::endl;
-        // ERROR
+        throw ParserException("WRONG BLOCK LENGTH");
     }
     CaffHeader header;
     header.header_size = (uint32_t)(bytes[4]);
