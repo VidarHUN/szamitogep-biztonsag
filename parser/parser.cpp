@@ -4,17 +4,20 @@
 #include <iostream>
 #include <stdexcept>
 
+// Ezzel kell majd vmit kezdeni mert elég hoszzúúúúú függvény
 ParsedInfo CAFFParser::parse_file(std::ifstream *file)
 {
     CaffHeader header;
     CaffCredits credits;
+    CaffAnimation *animation;
+    uint8_t blk_type;
+    uint64_t blk_len;
+
     // First block --> CAFF HEADER
-    auto typ = read_block_type(file);
-    if (typ != 1)
+    blk_type = next_block_info(file, blk_len);
+    if (blk_type != CAFFBlockType::Header)
         throw ParserException("First block must be a valid CAFF header");
-    auto blk_len = read_block_len(file);
-    char *bytes = new char[blk_len];
-    file->read(bytes, blk_len);
+    char *bytes = next_block(file, blk_len);
     try
     {
         header = parse_header(bytes, blk_len);
@@ -26,22 +29,35 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
     }
     delete bytes;
 
-    // Second block
-    typ = read_block_type(file);
-    if (typ != 2 && typ != 3)
-    {
-        throw ParserException("Credits or Animation block must come after the header.");
-    }
-    blk_len = read_block_len(file);
-    bytes = new char[blk_len];
-    file->read(bytes, blk_len);
+    // El kellene dönteni, hogy:
+    // a) csak a header után jöhet a credits, vagy
+    // b) csak a header után vagy csak a legvégén, vagy
+    // c) jöhet két animation block között is akár
 
-    if (typ == 2)
+    // most az a) verzió működik
+
+    // Second block
+    blk_type = next_block_info(file, blk_len);
+    // if (typ != 2 && typ != 3)
+    if (blk_type != CAFFBlockType::Credits)
+        throw ParserException("Credits block must come after the header.");
+    bytes = next_block(file, blk_len);
+    try
+    {
+        credits = parse_credits(bytes, blk_len);
+    }
+    catch (ParserException &e)
+    {
+        delete bytes;
+        throw e;
+    }
+    delete bytes;
+
+    // Animation blocks
+    animation = new CaffAnimation[header.num_anim];
+    for (size_t i = 0; i < header.num_anim; i++)
     {
         /* code */
-    }
-    else // typ == 3
-    {
     }
 
     ParsedInfo pi;
