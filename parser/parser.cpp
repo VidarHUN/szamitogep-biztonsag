@@ -1,31 +1,39 @@
+#include "parser.hpp"
+#include <cstring>
 #include "caff.h"
-#include "ciff.h"
-
 #include <iostream>
-#include <fstream>
-#include <cstdint>
 
-using namespace std;
+ParsedInfo CAFFParser::parse_file(std::ifstream *file)
+{
+    file->read(buf1, 1);
+    file->read(buf8, 8);
+    uint64_t blk_size = (uint64_t)(*buf8);
+    char *header_bytes = new char[blk_size];
+    file->read(header_bytes, blk_size);
+    auto header = parse_header(header_bytes, blk_size);
+    ParsedInfo pi;
+    pi.blk_info.type = (uint8_t)(*buf1);
+    pi.blk_info.length = blk_size;
+    pi.caff_header = header;
+    return pi;
+}
 
-int main(int argc, char **argv) {
-    ifstream file("caff_files/1.caff", ios::in | ios::out | ios::binary);
+CaffHeader CAFFParser::parse_header(char *bytes, uint64_t blk_len)
+{
+    char magic[4];
+    std::memcpy(magic, bytes, 4);
 
-    if (!file.is_open()) {
-        cout << "FATAL: File caff_files/1.caff could not be opened.\n";
-        return 1;
+    if ((int)*magic != (int)*_magic)
+    {
+        std::cout << "WRONG MAGIC" << std::endl;
     }
-    else {
-        // Code
-        file.seekg(0, file.end);
-        size_t file_size = file.tellg();
-        file.seekg(0, file.beg);
-
-        char* buffer = new char[file_size];
-        file.read(buffer, file_size);
-
-        file.close();
-        delete[] buffer;
+    if ((uint32_t)(bytes[4]) != blk_len)
+    {
+        std::cout << "WRONG LEN" << std::endl;
+        // ERROR
     }
-
-    return 0;
+    CaffHeader header;
+    header.header_size = (uint32_t)(bytes[4]);
+    header.num_anim = (uint32_t)(*(bytes + 12));
+    return header;
 }
