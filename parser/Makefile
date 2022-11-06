@@ -1,11 +1,11 @@
-output: parser.o caff.o
-	g++ parser.o caff.o -o output
+program: parser.o caff.o main.cpp
+	g++ main.cpp parser.o caff.o -o program
 
-parser.o: parser.cpp
+parser.o: parser.cpp parser.hpp
 	g++ -c parser.cpp
 
 caff.o: caff.cpp caff.h
 	g++ -c caff.cpp
 
 clean:
-	rm *.o output
+	rm *.o program
