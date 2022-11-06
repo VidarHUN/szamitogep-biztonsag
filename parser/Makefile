@@ -1,4 +1,4 @@
-program: parser.o caff.o
+program: parser.o caff.o main.cpp
 	g++ main.cpp parser.o caff.o -o program
 
 parser.o: parser.cpp parser.hpp
