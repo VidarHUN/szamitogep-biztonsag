@@ -37,8 +37,14 @@ struct CaffAnimation
 {
     uint64_t duration; // indicates when the CIFF image must be displayed [ms]
     CiffHeader header;
-    // TODO: I am not sure how to store CIFF image.
-    // TODO: Also, we have to find a way show image from binary
+    char *img;
+
+    CaffAnimation() : img(nullptr) {}
+    ~CaffAnimation()
+    {
+        if (img != nullptr)
+            delete img;
+    }
 };
 
 CaffHeader caff_header(const char *buffer);
