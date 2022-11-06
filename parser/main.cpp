@@ -23,10 +23,13 @@ int main(int argc, char **argv)
             cout << "header len:\t" << info.caff_header.header_size << endl;
             cout << "num anim:\t" << info.caff_header.num_anim << endl;
             cout << "Credits:\t" << info.credits.toString() << endl;
-            cout << "Animation:\t"
-                 << "duration: " << info.animation->duration
-                 << "\theader: " << info.animation->header.header_size
-                 << "\tcontent: " << info.animation->header.content_size << endl;
+            for (int i = 0; i < info.caff_header.num_anim; i++)
+            {
+                cout << "Animation" << i + 1 << ":\t"
+                     << "duration: " << info.animation[i].duration
+                     << "\theader: " << info.animation[i].header.header_size
+                     << "\tcontent: " << info.animation[i].header.content_size << endl;
+            }
         }
         catch (ParserException &e)
         {

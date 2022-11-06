@@ -43,7 +43,6 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
         throw ParserException("Credits block must come after the header.");
     delete bytes;
     bytes = next_block(file, blk_len);
-    cout << "blk_type: " << (int)blk_type << "\tblk_len: " << blk_len << endl;
     try
     {
         credits = parse_credits(bytes);
@@ -55,13 +54,16 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
     }
 
     // Animation blocks
-    blk_type = next_block_info(file, blk_len);
-    cout << endl;
-    if (blk_type != CAFFBlockType::Animation)
-        throw ParserException("Animation block must come after credits.");
-    delete bytes;
-    bytes = next_block(file, blk_len);
-    animation = new CaffAnimation(parse_animation(bytes, blk_len));
+    animation = new CaffAnimation[header.num_anim];
+    for (int i = 0; i < header.num_anim; i++)
+    {
+        blk_type = next_block_info(file, blk_len);
+        if (blk_type != CAFFBlockType::Animation)
+            throw ParserException("Animation block must come after credits.");
+        delete bytes;
+        bytes = next_block(file, blk_len);
+        animation[i] = parse_animation(bytes, blk_len);
+    }
 
     ParsedInfo pi;
     pi.caff_header = header;
@@ -121,6 +123,8 @@ CaffAnimation CAFFParser::parse_animation(char *bytes, uint64_t blk_len)
     CaffAnimation animation;
     animation.duration = convert_8_bytes(bytes);
     animation.header = parse_ciff_header(bytes + 8, blk_len);
+    char *img = new char[animation.header.content_size];
+    memcpy(img, bytes + 8 + animation.header.header_size, animation.header.content_size);
     return animation;
 }
 

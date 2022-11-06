@@ -22,7 +22,7 @@ struct ParsedInfo
     ~ParsedInfo()
     {
         if (animation != nullptr)
-            delete animation;
+            delete[] animation;
     }
 };
 
