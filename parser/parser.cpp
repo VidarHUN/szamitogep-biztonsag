@@ -43,9 +43,10 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
         throw ParserException("Credits block must come after the header.");
     delete bytes;
     bytes = next_block(file, blk_len);
+    cout << "blk_type: " << (int)blk_type << "\tblk_len: " << blk_len << endl;
     try
     {
-        credits = parse_credits(bytes, blk_len);
+        credits = parse_credits(bytes);
     }
     catch (std::exception &e)
     {
@@ -54,15 +55,18 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
     }
 
     // Animation blocks
-    // animation = new CaffAnimation[header.num_anim];
-    // for (size_t i = 0; i < header.num_anim; i++)
-    // {
-    //     /* code */
-    // }
+    blk_type = next_block_info(file, blk_len);
+    cout << endl;
+    if (blk_type != CAFFBlockType::Animation)
+        throw ParserException("Animation block must come after credits.");
+    delete bytes;
+    bytes = next_block(file, blk_len);
+    animation = new CaffAnimation(parse_animation(bytes, blk_len));
 
     ParsedInfo pi;
     pi.caff_header = header;
     pi.credits = credits;
+    pi.animation = animation;
     return pi;
 }
 
@@ -71,7 +75,7 @@ CaffHeader CAFFParser::parse_header(char *bytes, uint64_t blk_len)
     char magic[4];
     std::memcpy(magic, bytes, 4);
 
-    if ((int)*magic != (int)*_magic)
+    if ((int)*magic != (int)*_caffmagic)
     {
         throw ParserException("WRONG CAFF MAGIC");
     }
@@ -85,7 +89,7 @@ CaffHeader CAFFParser::parse_header(char *bytes, uint64_t blk_len)
     return header;
 }
 
-CaffCredits CAFFParser::parse_credits(char *bytes, uint64_t blk_len)
+CaffCredits CAFFParser::parse_credits(char *bytes)
 {
     CaffCredits credits;
     time_t now = time(0);
@@ -110,4 +114,28 @@ CaffCredits CAFFParser::parse_credits(char *bytes, uint64_t blk_len)
     {
         throw;
     }
+}
+
+CaffAnimation CAFFParser::parse_animation(char *bytes, uint64_t blk_len)
+{
+    CaffAnimation animation;
+    animation.duration = convert_8_bytes(bytes);
+    animation.header = parse_ciff_header(bytes + 8, blk_len);
+    return animation;
+}
+
+CiffHeader CAFFParser::parse_ciff_header(char *bytes, uint64_t blk_len)
+{
+    char magic[4];
+    std::memcpy(magic, bytes, 4);
+    if ((int)*magic != (int)*_ciffmagic)
+        throw ParserException("WRONG CIFF MAGIC");
+    CiffHeader header;
+    header.header_size = convert_8_bytes(bytes + 4);
+    header.content_size = convert_8_bytes(bytes + 12);
+    header.width = convert_8_bytes(bytes + 20);
+    header.height = convert_8_bytes(bytes + 28);
+    if (blk_len != header.header_size + header.content_size + 8)
+        throw ParserException("CIFF size attributes do not match.");
+    return header;
 }

@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include "caff.h"
+#include "ciff.h"
 #include <stdexcept>
 
 struct BlockInfo
@@ -18,7 +19,11 @@ struct ParsedInfo
     CaffAnimation *animation;
 
     ParsedInfo() : animation(nullptr) {}
-    ~ParsedInfo() { delete animation; }
+    ~ParsedInfo()
+    {
+        if (animation != nullptr)
+            delete animation;
+    }
 };
 
 class CAFFParser
@@ -33,10 +38,13 @@ private:
     };
 
     char *buf1, *buf4, *buf8;
-    char _magic[4] = {0x43, 0x41, 0x46, 0x46};
+    char _caffmagic[4] = {0x43, 0x41, 0x46, 0x46};
+    char _ciffmagic[4] = {0x43, 0x49, 0x46, 0x46};
 
     CaffHeader parse_header(char *bytes, uint64_t blk_len);
-    CaffCredits parse_credits(char *bytes, uint64_t blk_len);
+    CaffCredits parse_credits(char *bytes);
+    CaffAnimation parse_animation(char *bytes, uint64_t blk_len);
+    CiffHeader parse_ciff_header(char *bytesm, uint64_t blk_len);
 
     inline CAFFBlockType next_block_info(std::ifstream *file, uint64_t &len)
     {
@@ -71,7 +79,17 @@ private:
     inline uint64_t read_block_len(std::ifstream *file)
     {
         file->read(buf8, 8);
-        return (uint64_t)(*buf8);
+        return convert_8_bytes(buf8);
+    }
+
+    inline uint64_t convert_8_bytes(char *bytes)
+    {
+        uint64_t val = 0;
+        for (int i = 0; i < 8; i++)
+        {
+            val = val | (uint8_t) * (bytes + i) << i * 8;
+        }
+        return val;
     }
 
 public:
@@ -83,7 +101,7 @@ public:
     }
     ~CAFFParser()
     {
-        delete[] buf1, buf4, buf8;
+        delete buf1, buf4, buf8;
     }
 
     ParsedInfo parse_file(std::ifstream *file);
