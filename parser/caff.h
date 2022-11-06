@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 #include <sstream>
+#include "ciff.h"
 
 using namespace std;
 
@@ -11,7 +12,7 @@ struct CaffHeader
 {
     uint64_t header_size; // size of the header
     uint64_t num_anim;    // Number of CIFF animation blocks
-} __attribute__((packed));
+};
 
 struct CaffCredits
 {
@@ -35,9 +36,10 @@ struct CaffCredits
 struct CaffAnimation
 {
     uint64_t duration; // indicates when the CIFF image must be displayed [ms]
+    CiffHeader header;
     // TODO: I am not sure how to store CIFF image.
     // TODO: Also, we have to find a way show image from binary
-} __attribute__((packed));
+};
 
 CaffHeader caff_header(const char *buffer);
 CaffCredits caff_credits(const char *buffer);
