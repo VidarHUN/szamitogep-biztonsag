@@ -36,3 +36,5 @@
 
 *.dtmp
 *.bkp
+
+.vscode
