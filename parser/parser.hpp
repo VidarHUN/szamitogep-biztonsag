@@ -16,7 +16,7 @@ struct ParsedInfo
     BlockInfo blk_info;
     CaffHeader caff_header;
     CaffCredits credits;
-    CaffAnimation *animation;
+    CaffAnimation **animation;
 
     ParsedInfo() : animation(nullptr) {}
     ~ParsedInfo()
@@ -43,8 +43,8 @@ private:
 
     CaffHeader parse_header(char *bytes, uint64_t blk_len);
     CaffCredits parse_credits(char *bytes);
-    CaffAnimation parse_animation(char *bytes, uint64_t blk_len);
-    CiffHeader parse_ciff_header(char *bytesm, uint64_t blk_len);
+    CaffAnimation *parse_animation(char *bytes, uint64_t blk_len);
+    CiffHeader *parse_ciff_header(char *bytesm, uint64_t blk_len);
 
     inline CAFFBlockType next_block_info(std::ifstream *file, uint64_t &len)
     {
@@ -106,6 +106,10 @@ public:
 
     ParsedInfo parse_file(std::ifstream *file);
 };
+
+void parse_ciff_strings(char *bytes, CiffHeader &);
+char *parse_caption(char *bytes, CiffHeader &);
+void parse_tags(char *, char *, CiffHeader &);
 
 class ParserException : public std::exception
 {
