@@ -36,14 +36,16 @@ struct CaffCredits
 struct CaffAnimation
 {
     uint64_t duration; // indicates when the CIFF image must be displayed [ms]
-    CiffHeader header;
+    CiffHeader *header;
     char *img;
 
-    CaffAnimation() : img(nullptr) {}
+    CaffAnimation() : img(nullptr), header(nullptr) {}
     ~CaffAnimation()
     {
         if (img != nullptr)
             delete img;
+        if (header != nullptr)
+            delete header;
     }
 };
 
