@@ -5,7 +5,8 @@
 #include <stdexcept>
 #include <ctime>
 
-// Ezzel kell majd vmit kezdeni mert elég hoszzúúúúú függvény
+// TODO exceptions
+
 ParsedInfo CAFFParser::parse_file(std::ifstream *file)
 {
     CaffHeader header;
@@ -108,7 +109,7 @@ CaffCredits CAFFParser::parse_credits(char *bytes)
         check_interval(credits.h, 0, 24);
         credits.m = (uint8_t)(bytes[5]);
         check_interval(credits.m, 0, 60);
-        auto creator_len = (uint64_t)(bytes[6]);
+        auto creator_len = (uint64_t)(bytes[6]); // TODO creator len != 0
         credits.creator = bytes_to_string(bytes, 14, 14 + creator_len);
         return credits;
     }
@@ -141,5 +142,6 @@ CiffHeader CAFFParser::parse_ciff_header(char *bytes, uint64_t blk_len)
     header.height = convert_8_bytes(bytes + 28);
     if (blk_len != header.header_size + header.content_size + 8)
         throw ParserException("CIFF size attributes do not match.");
+    // TODO: caption, tags
     return header;
 }

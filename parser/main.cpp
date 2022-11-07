@@ -11,7 +11,7 @@ int main(int argc, char **argv)
 
     if (!file.is_open())
     {
-        cout << "FATAL: File caff_files/1.caff could not be opened.\n";
+        cout << "FATAL: File caff_files/.caff could not be opened.\n";
         return 1;
     }
     else
@@ -27,7 +27,9 @@ int main(int argc, char **argv)
             {
                 cout << "Animation" << i + 1 << ":\t"
                      << "duration: " << info.animation[i].duration
-                     << "\theader: " << info.animation[i].header.header_size
+                     << "\theader: " << info.animation[i].header.header_size << endl
+                     << "\t\twidth: " << info.animation[i].header.width << endl
+                     << "\t\theight: " << info.animation[i].header.width << endl
                      << "\tcontent: " << info.animation[i].header.content_size << endl;
             }
         }
