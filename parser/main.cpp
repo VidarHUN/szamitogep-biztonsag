@@ -26,11 +26,17 @@ int main(int argc, char **argv)
             for (int i = 0; i < info.caff_header.num_anim; i++)
             {
                 cout << "Animation" << i + 1 << ":\t"
-                     << "duration: " << info.animation[i].duration
-                     << "\theader: " << info.animation[i].header.header_size << endl
-                     << "\t\twidth: " << info.animation[i].header.width << endl
-                     << "\t\theight: " << info.animation[i].header.width << endl
-                     << "\tcontent: " << info.animation[i].header.content_size << endl;
+                     << "duration: " << info.animation[i]->duration
+                     << "\theader: " << info.animation[i]->header->header_size << endl
+                     << "\t\twidth: " << info.animation[i]->header->width << endl
+                     << "\t\theight: " << info.animation[i]->header->width << endl
+                     << "\tcontent: " << info.animation[i]->header->content_size << endl
+                     << "\tCaption:\t" << info.animation[i]->header->caption << endl
+                     << "\tTags:";
+                for (size_t j = 0; j < info.animation[i]->header->num_tags; j++)
+                {
+                    cout << "\t\t" << *(info.animation[i]->header->tags[j]) << endl;
+                }
             }
         }
         catch (ParserException &e)
