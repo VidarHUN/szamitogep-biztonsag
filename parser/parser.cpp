@@ -1,7 +1,6 @@
 #include "parser.hpp"
 #include <cstring>
 #include "caff.h"
-#include <iostream>
 #include <stdexcept>
 #include <ctime>
 
@@ -11,7 +10,7 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
 {
     CaffHeader header;
     CaffCredits credits;
-    CaffAnimation *animation;
+    CaffAnimation **animation;
     uint8_t blk_type;
     uint64_t blk_len;
 
@@ -55,7 +54,7 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
     }
 
     // Animation blocks
-    animation = new CaffAnimation[header.num_anim];
+    animation = new CaffAnimation *[header.num_anim];
     for (int i = 0; i < header.num_anim; i++)
     {
         blk_type = next_block_info(file, blk_len);
@@ -109,8 +108,11 @@ CaffCredits CAFFParser::parse_credits(char *bytes)
         check_interval(credits.h, 0, 24);
         credits.m = (uint8_t)(bytes[5]);
         check_interval(credits.m, 0, 60);
-        auto creator_len = (uint64_t)(bytes[6]); // TODO creator len != 0
-        credits.creator = bytes_to_string(bytes, 14, 14 + creator_len);
+        auto creator_len = (uint64_t)(bytes[6]);
+        if (creator_len == 0)
+            credits.creator == "";
+        else
+            credits.creator = bytes_to_string(bytes, 14, 14 + creator_len);
         return credits;
     }
     catch (std::invalid_argument &e)
@@ -119,29 +121,69 @@ CaffCredits CAFFParser::parse_credits(char *bytes)
     }
 }
 
-CaffAnimation CAFFParser::parse_animation(char *bytes, uint64_t blk_len)
+CaffAnimation *CAFFParser::parse_animation(char *bytes, uint64_t blk_len)
 {
-    CaffAnimation animation;
-    animation.duration = convert_8_bytes(bytes);
-    animation.header = parse_ciff_header(bytes + 8, blk_len);
-    char *img = new char[animation.header.content_size];
-    memcpy(img, bytes + 8 + animation.header.header_size, animation.header.content_size);
+    CaffAnimation *animation = new CaffAnimation();
+    animation->duration = convert_8_bytes(bytes);
+    animation->header = parse_ciff_header(bytes + 8, blk_len);
+    char *img = new char[animation->header->content_size];
+    memcpy(img, bytes + 8 + animation->header->header_size, animation->header->content_size);
     return animation;
 }
 
-CiffHeader CAFFParser::parse_ciff_header(char *bytes, uint64_t blk_len)
+CiffHeader *CAFFParser::parse_ciff_header(char *bytes, uint64_t blk_len)
 {
     char magic[4];
     std::memcpy(magic, bytes, 4);
     if ((int)*magic != (int)*_ciffmagic)
         throw ParserException("WRONG CIFF MAGIC");
-    CiffHeader header;
-    header.header_size = convert_8_bytes(bytes + 4);
-    header.content_size = convert_8_bytes(bytes + 12);
-    header.width = convert_8_bytes(bytes + 20);
-    header.height = convert_8_bytes(bytes + 28);
-    if (blk_len != header.header_size + header.content_size + 8)
+    CiffHeader *header = new CiffHeader();
+    header->header_size = convert_8_bytes(bytes + 4);
+    header->content_size = convert_8_bytes(bytes + 12);
+    header->width = convert_8_bytes(bytes + 20);
+    header->height = convert_8_bytes(bytes + 28);
+    if (blk_len != header->header_size + header->content_size + 8)
         throw ParserException("CIFF size attributes do not match.");
-    // TODO: caption, tags
+    if (bytes[header->header_size - 1] != '\n' && bytes[header->header_size - 1] != '\0')
+        throw ParserException("Problem with CIFF Caption/tags ending character.");
+    parse_ciff_strings(bytes, *header);
     return header;
+}
+
+void parse_ciff_strings(char *bytes, CiffHeader &header)
+{
+    char *cap_end = parse_caption(bytes, header);
+    if (cap_end < bytes + header.header_size)
+    {
+        parse_tags(bytes, cap_end, header);
+    }
+}
+
+char *parse_caption(char *bytes, CiffHeader &header)
+{
+    char *beg = bytes + 36;
+    char *end = beg;
+    for (; *end != '\n' && end < bytes + header.header_size; end++)
+        ;
+    char cap[end - beg + 1];
+    std::memcpy(cap, beg, end - beg);
+    cap[end - beg] = '\0';
+    header.caption = string(cap);
+    return end;
+}
+
+void parse_tags(char *bytes, char *sep, CiffHeader &header)
+{
+    int num_tags = 0;
+    for (char *p = sep + 1; p < bytes + header.header_size; p++)
+        if (*p == '\0')
+            num_tags++;
+    header.num_tags = num_tags;
+    header.tags = new string *[num_tags];
+    for (size_t i = 0; i < num_tags; i++)
+    {
+        header.tags[i] = new string(++sep);
+        for (; *sep != '\0'; sep++)
+            ;
+    }
 }
