@@ -19,15 +19,16 @@ inline void to_json(json& j, const ParsedInfo& info){
                        {"creator", info.credits.creator}};
     j["animations"]={
                     {"duration", info.animation->duration},
-                    {{"ciff_header_size", info.animation->header.header_size}, 
-                    {"ciff_header_content_size", info.animation->header.content_size},
-                    {"ciff_header_width", info.animation->header.width},
-                    {"ciff_header_height", info.animation->header.height},
-                    {"ciff_header_caption", info.animation->header.caption}}
-                    ///TO DO dinamikus tömböket serializálni
-                    //{"ciff_header_tags", info.animation->header.tags}}
-                    //{"img", info.animation->img}    
-    };
+                    {   {"ciff_header_size", info.animation->header.header_size}, 
+                        {"ciff_header_content_size", info.animation->header.content_size},
+                        {"ciff_header_width", info.animation->header.width},
+                        {"ciff_header_height", info.animation->header.height},
+                        {"ciff_header_caption", info.animation->header.caption}
+                        //{"ciff_header_tags", info.animation->header.tags}}
+                        }
+                    ///TO DO dinamikus tömböket serializálni header tags is ilyen, asszem
+                  //{"img", info.animation->img}    
+                    };
 }
 
 //overrideing from_json function
@@ -43,10 +44,10 @@ inline void from_json(const json& j, ParsedInfo& info){
     j.at("caff_credits").at("hour").get_to(info.credits.h);
     j.at("caff_credits").at("minute").get_to(info.credits.m);
     j.at("caff_credits").at("creator").get_to(info.credits.creator);
-    j.at("animations").at("duration").get_to(info.animation->duration);
     /*TO DO
     a HIBA [json.exception.type_error.304] cannot use at() with array
     
+    j.at("animations").at("duration").get_to(info.animation->duration);
     j.at("animations").at("ciff_header_size").get_to(info.animation->header.header_size);
     j.at("animations").at("ciff_header_content_size").get_to(info.animation->header.content_size);
     j.at("animations").at("ciff_header_width").get_to(info.animation->header.width);
@@ -80,25 +81,11 @@ int main(int argc, char **argv)
     {
         CAFFParser parser;
         json j;
-        json jj;
         try
         {   
             ParsedInfo info = parser.parse_file(&file);
             to_json(j, info);
             //serialize(j);
-            ParsedInfo pars;
-            from_json(j,pars);
-            cout << "header len:\t" << pars.blk_info.length << endl;
-            cout << "header len:\t" << pars.caff_header.header_size << endl;
-            cout << "num anim:\t" << pars.caff_header.num_anim << endl;
-            /*cout << "Credits:\t" << info.credits.toString() << endl;
-            for (int i = 0; i < info.caff_header.num_anim; i++)
-            {
-                cout << "Animation" << i + 1 << ":\t"
-                     << "duration: " << info.animation[i].duration
-                     << "\theader: " << info.animation[i].header.header_size
-                     << "\tcontent: " << info.animation[i].header.content_size << endl;
-            }*/
         }
         catch (ParserException &e)
         {
@@ -106,6 +93,12 @@ int main(int argc, char **argv)
             file.close();
             return 1;
         }
+
+        ParsedInfo pars;
+        from_json(j,pars);
+        cout << "header len:\t" << pars.blk_info.length << endl;
+        cout << "header len:\t" << pars.caff_header.header_size << endl;
+        cout << "num anim:\t" << pars.caff_header.num_anim << endl;
     }
     file.close();
     return 0;
