@@ -5,6 +5,9 @@
 #include "caff.h"
 #include "ciff.h"
 #include <stdexcept>
+#include "json.hpp"
+
+using json = nlohmann::json_abi_v3_11_2::json;
 
 struct BlockInfo
 {
@@ -28,6 +31,9 @@ struct ParsedInfo
             delete[] animation;
         }
     }
+
+    void to_Json() {}
+    void from_Json() {}
 };
 
 class CAFFParser
