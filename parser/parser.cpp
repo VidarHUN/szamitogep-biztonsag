@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <ctime>
+#include <iostream>
 
 // Ezzel kell majd vmit kezdeni mert elég hoszzúúúúú függvény
 ParsedInfo CAFFParser::parse_file(std::ifstream *file)
@@ -142,4 +143,32 @@ CiffHeader CAFFParser::parse_ciff_header(char *bytes, uint64_t blk_len)
     if (blk_len != header.header_size + header.content_size + 8)
         throw ParserException("CIFF size attributes do not match.");
     return header;
+}
+
+//overrideing to_json methode
+//nem lehetett tagfüggvény, csak felül kell írni és meghívni
+inline void to_json(json& j, const ParsedInfo& info){
+    j["blk_info"] = {{"blk_type", info.blk_info.type}, {"blk_length", info.blk_info.length}};
+    j["caff_header"] = {{"caff_header_size", info.caff_header.header_size}, 
+                       {"caff_header_num_anim", info.caff_header.num_anim}};
+    j["caff_credits"]={{"year", info.credits.YY},
+                       {"month", info.credits.M},
+                       {"day", info.credits.D},
+                       {"hour", info.credits.h},
+                       {"minute", info.credits.m},
+                       {"creator", info.credits.creator}};
+    j["animations"]={
+                    {"duration", info.animation->duration},
+                    {{"caff_header_size", info.caff_header.header_size}, 
+                        {"caff_header_num_anim", info.caff_header.num_anim}},
+                    {"img", info.animation->img}      
+    };
+}
+
+void serialize(const json& j)
+{
+    string s = j.dump();
+    std::cout << "serialization: " << s << std::endl;
+
+    std::cout << "serialization with pretty printing: " << j.dump(4) << std::endl;
 }
