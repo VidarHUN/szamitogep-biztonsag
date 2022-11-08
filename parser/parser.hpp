@@ -31,9 +31,6 @@ struct ParsedInfo
             delete[] animation;
         }
     }
-
-    void to_Json() {}
-    void from_Json() {}
 };
 
 class CAFFParser

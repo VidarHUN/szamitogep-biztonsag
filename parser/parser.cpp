@@ -3,6 +3,7 @@
 #include "caff.h"
 #include <stdexcept>
 #include <ctime>
+#include <iostream>
 
 // TODO exceptions
 
