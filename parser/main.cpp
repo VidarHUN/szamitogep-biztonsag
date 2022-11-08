@@ -5,7 +5,7 @@
 
 using namespace std;
 
-//overrideing to_json methode
+//overrideing to_json function
 //nem lehetett tagfüggvény, csak felül kell írni és meghívni
 inline void to_json(json& j, const ParsedInfo& info){
     j["blk_info"] = {{"blk_type", info.blk_info.type}, {"blk_length", info.blk_info.length}};
@@ -23,6 +23,34 @@ inline void to_json(json& j, const ParsedInfo& info){
                         {"caff_header_num_anim", info.caff_header.num_anim}},
                     //{"img", info.animation->img}      
     };
+}
+
+//overrideing from_json function
+////nem lehetett tagfüggvény, csak felül kell írni és meghívni
+inline void from_json(const json& j, ParsedInfo& info){
+    j.at("blk_info").at("blk_type").get_to(info.blk_info.type);
+    j.at("blk_info").at("blk_length").get_to(info.blk_info.length);
+    j.at("caff_header").at("caff_header_size").get_to(info.caff_header.header_size);
+    j.at("caff_header").at("caff_header_num_anim").get_to(info.caff_header.num_anim);
+    j.at("caff_credits").at("year").get_to(info.credits.YY);
+    j.at("caff_credits").at("month").get_to(info.credits.M);
+    j.at("caff_credits").at("day").get_to(info.credits.D);
+    j.at("caff_credits").at("hour").get_to(info.credits.h);
+    j.at("caff_credits").at("minute").get_to(info.credits.m);
+    j.at("caff_credits").at("creator").get_to(info.credits.creator);
+    j.at("animations").at("duration").get_to(info.animation->duration);
+    /*TO DO
+    a HIBA [json.exception.type_error.304] cannot use at() with array
+    
+    j.at("animations").at("ciff_header_size").get_to(info.animation->header.header_size);
+    j.at("animations").at("ciff_header_content_size").get_to(info.animation->header.content_size);
+    j.at("animations").at("ciff_header_width").get_to(info.animation->header.width);
+    j.at("animations").at("ciff_header_height").get_to(info.animation->header.height);*/
+    //j.at("animations").at("ciff_header_caption").get_to(info.animation->header.caption);
+    ///TO DO dinamikus ttömbökre
+    //ciff_header_tags
+    //image
+
 }
 
 //prints the json object to stdout 
@@ -47,6 +75,7 @@ int main(int argc, char **argv)
     {
         CAFFParser parser;
         json j;
+        json jj;
         try
         {   
             ParsedInfo info = parser.parse_file(&file);
