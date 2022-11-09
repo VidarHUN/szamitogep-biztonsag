@@ -45,25 +45,15 @@ int main(int argc, char **argv)
         try
         {   
             ParsedInfo info = parser.parse_file(&file);
-            to_json(j, info);
-            serialize(j);
             cout << "header len:\t" << info.caff_header.header_size << endl;
             cout << "num anim:\t" << info.caff_header.num_anim << endl;
             cout << "Credits:\t" << info.credits.toString() << endl;
             for (int i = 0; i < info.caff_header.num_anim; i++)
             {
                 cout << "Animation" << i + 1 << ":\t"
-                     << "duration: " << info.animation[i]->duration
-                     << "\theader: " << info.animation[i]->header->header_size << endl
-                     << "\t\twidth: " << info.animation[i]->header->width << endl
-                     << "\t\theight: " << info.animation[i]->header->width << endl
-                     << "\tcontent: " << info.animation[i]->header->content_size << endl
-                     << "\tCaption:\t" << info.animation[i]->header->caption << endl
-                     << "\tTags:";
-                for (size_t j = 0; j < info.animation[i]->header->num_tags; j++)
-                {
-                    cout << "\t\t" << *(info.animation[i]->header->tags[j]) << endl;
-                }
+                     << "duration: " << info.animation[i].duration
+                     << "\theader: " << info.animation[i].header.header_size
+                     << "\tcontent: " << info.animation[i].header.content_size << endl;
             }
         }
         catch (ParserException &e)
