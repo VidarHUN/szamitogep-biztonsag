@@ -3,6 +3,9 @@
 #include "caff.h"
 #include <stdexcept>
 #include <ctime>
+#include <iostream>
+#include <filesystem>
+#include <io.h>
 
 ParsedInfo CAFFParser::parse_file(std::ifstream *file)
 {
@@ -62,7 +65,7 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
                 throw ParserException("Animation block must come after credits.");
             delete[] bytes;
             bytes = next_block(file, blk_len);
-            animation[i] = parse_animation(bytes, blk_len);
+            animation[i] = parse_animation(bytes, blk_len, i);
         }
     }
     catch (ParserException &e)
@@ -134,7 +137,49 @@ CaffCredits CAFFParser::parse_credits(char *bytes)
     }
 }
 
-CaffAnimation *CAFFParser::parse_animation(char *bytes, uint64_t blk_len)
+typedef unsigned char byte;
+void create_ppm_image(char* img, CiffHeader* header, int num_anim) {
+    size_t SIZE = header->width * header->height;
+    byte* image_data = (byte*)malloc(SIZE);	//Allocating memory for image of size w: 256 & h: 256 pixels & 3 colour channels
+    memset(image_data, 255, SIZE);		//Setting all allocated memory to value of 255 (ie. white), this will be first 'painted' to image in the Body
+
+    std::ofstream myImage("ppms\\image" + to_string(num_anim) + ".ppm", ios::out | ios::binary);
+
+    if (myImage.fail())
+    {
+        cout << "Unable to create image.ppm" << endl;
+        getchar();
+        getchar();
+        return;
+    }
+
+    const int width = header->width, height = header->height;
+
+    { //Image header - Need this to start the image properties
+        myImage << "P6" << endl;						//Declare that you want to use ASCII colour values
+        myImage << width << " " << height << endl;		//Declare w & h
+        myImage << "255" << endl;						//Declare max colour ID
+    }
+
+    char* ptr = img;
+    int pixel = 0;
+    for (char c = *ptr; c; c=*++ptr) {
+        myImage << c;
+        pixel++;
+    }
+
+    myImage.close();
+
+    free(image_data);
+    image_data = NULL;
+
+    getchar();
+    getchar();
+
+    return;
+}
+
+CaffAnimation *CAFFParser::parse_animation(char *bytes, uint64_t blk_len, int num_anim)
 {
     CaffAnimation *animation = new CaffAnimation();
     animation->duration = convert_8_bytes(bytes);
@@ -149,6 +194,7 @@ CaffAnimation *CAFFParser::parse_animation(char *bytes, uint64_t blk_len)
     }
     char *img = new char[animation->header->content_size];
     memcpy(img, bytes + 8 + animation->header->header_size, animation->header->content_size);
+    create_ppm_image(img,animation->header, num_anim);
     animation->img = img;
     return animation;
 }
@@ -215,3 +261,4 @@ void parse_tags(char *bytes, char *sep, CiffHeader &header)
             ;
     }
 }
+

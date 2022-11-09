@@ -50,7 +50,7 @@ private:
 
     CaffHeader parse_header(char *bytes, uint64_t blk_len);
     CaffCredits parse_credits(char *bytes);
-    CaffAnimation *parse_animation(char *bytes, uint64_t blk_len);
+    CaffAnimation *parse_animation(char *bytes, uint64_t blk_len, int num_anim);
     CiffHeader *parse_ciff_header(char *bytesm, uint64_t blk_len);
 
     inline CAFFBlockType next_block_info(std::ifstream *file, uint64_t &len)

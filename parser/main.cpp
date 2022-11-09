@@ -52,7 +52,7 @@ static void serialize_write(const json &j)
 
 int main(int argc, char **argv)
 {
-    ifstream file("caff_files/1.caff", ios::in | ios::out | ios::binary);
+    ifstream file("C:\\Users\\Nina\\source\\repos\\szamitogep-biztonsag\\parser\\caff_files\\1.caff", ios::in | ios::out | ios::binary);
 
     if (!file.is_open())
     {
