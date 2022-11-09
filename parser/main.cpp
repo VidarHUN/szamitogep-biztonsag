@@ -18,9 +18,13 @@ void serialize(json &j, const ParsedInfo &info)
     j["creator"] = info.credits.creator;
 
     auto durations = json::array();
+    auto filenames = json::array();
     for (size_t i = 0; i < info.caff_header.num_anim; i++)
     {
+        stringstream ss;
+        ss << i << ".ppm";
         durations += info.animation[0]->duration;
+        filenames += ss.str();
     }
     j["durations"] = durations;
 
