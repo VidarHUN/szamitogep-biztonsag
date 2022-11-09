@@ -4,8 +4,6 @@
 #include <stdexcept>
 #include <ctime>
 
-// TODO exceptions
-
 ParsedInfo CAFFParser::parse_file(std::ifstream *file)
 {
     CaffHeader header;

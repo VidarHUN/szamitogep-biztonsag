@@ -6,46 +6,38 @@
 using namespace std;
 using json = nlohmann::json_abi_v3_11_2::json;
 
-//nem lehetett tagfüggvény, csak felül kell írni és meghívni
-void serialize(json& j, const ParsedInfo& info){
-    j["num_anim"] =  info.caff_header.num_anim;
+// nem lehetett tagfüggvény, csak felül kell írni és meghívni
+void serialize(json &j, const ParsedInfo &info)
+{
+    j["num_anim"] = info.caff_header.num_anim;
     j["year"] = info.credits.YY;
     j["month"] = info.credits.M;
-    j["day"]= info.credits.D;
-    j["hour"]=info.credits.h;
-    j["minute"]=info.credits.m;
-    j["creator"]= info.credits.creator;
+    j["day"] = info.credits.D;
+    j["hour"] = info.credits.h;
+    j["minute"] = info.credits.m;
+    j["creator"] = info.credits.creator;
 
-    /*ToDo
-    Ez a struktura nem sikerült
-     "animation": [
-        {
-            "duration": 1,
-            "ppm": "ppm name"
-        }
-    ]
-    */
-    //for (int i = 0; i < info.caff_header.num_anim; i++){
-        /*Lehet ezek nem is kellenek :
-        j["captions"]=info.animation[i]->header->caption;
-        j["content_size"]=info.animation[i]->header->caption;
-        j["width"]=info.animation[i]->header->width;
-        j["height"]=info.animation[i]->header->height;
-        j["header_size"]=info.animation[i]->header->header_size;
-        */
+    auto durations = json::array();
+    for (size_t i = 0; i < info.caff_header.num_anim; i++)
+    {
+        durations += info.animation[0]->duration;
+    }
+    j["durations"] = durations;
 
-        //j["duration"]=info.animation[i]->duration;
-        /*for(size_t k = 0; k < info.animation[i]->header->num_tags; k++)
-                {   
-                    j["tags"]={info.animation[i]->header->tags[k]};
-                }
-    
-    }*/
-    
+    j["caption"] = info.animation[0]->header->caption;
+    j["width"] = info.animation[0]->header->width;
+    j["height"] = info.animation[0]->header->height;
+
+    auto tags = json::array();
+    for (size_t k = 0; k < info.animation[0]->header->num_tags; k++)
+    {
+        tags += *(info.animation[0]->header->tags[k]);
+    }
+    j["tags"] = tags;
 }
 
-//prints the json object to stdout 
-static void serialize_write(const json& j)
+// prints the json object to stdout
+static void serialize_write(const json &j)
 {
     string s = j.dump();
     std::cout << "serialization: " << s << std::endl;
@@ -67,9 +59,9 @@ int main(int argc, char **argv)
         CAFFParser parser;
         json j;
         try
-        {   
+        {
             ParsedInfo info = parser.parse_file(&file);
-            serialize(j,info);
+            serialize(j, info);
             serialize_write(j);
         }
         catch (ParserException &e)
