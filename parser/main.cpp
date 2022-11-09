@@ -27,6 +27,7 @@ void serialize(json &j, const ParsedInfo &info)
         filenames += ss.str();
     }
     j["durations"] = durations;
+    j["filenames"] = filenames;
 
     j["caption"] = info.animation[0]->header->caption;
     j["width"] = info.animation[0]->header->width;
@@ -44,9 +45,9 @@ void serialize(json &j, const ParsedInfo &info)
 static void serialize_write(const json &j)
 {
     string s = j.dump();
-    std::cout << "serialization: " << s << std::endl;
-
-    std::cout << "serialization with pretty printing: " << j.dump(4) << std::endl;
+    ofstream meta("meta.json", ios::out);
+    meta << s;
+    meta.close();
 }
 
 int main(int argc, char **argv)
