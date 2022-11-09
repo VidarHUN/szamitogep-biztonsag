@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include "json.hpp"
 
-using json = nlohmann::json_abi_v3_11_2::json;
+
 
 struct BlockInfo
 {
