@@ -15,10 +15,34 @@ void serialize(json& j, const ParsedInfo& info){
     j["hour"]=info.credits.h;
     j["minute"]=info.credits.m;
     j["creator"]= info.credits.creator;
-    j["captions"]=info.animation->header.caption;
-    //j["animation"]= {}
-}
 
+    /*ToDo
+    Ez a struktura nem sikerült
+     "animation": [
+        {
+            "duration": 1,
+            "ppm": "ppm name"
+        }
+    ]
+    */
+    //for (int i = 0; i < info.caff_header.num_anim; i++){
+        /*Lehet ezek nem is kellenek :
+        j["captions"]=info.animation[i]->header->caption;
+        j["content_size"]=info.animation[i]->header->caption;
+        j["width"]=info.animation[i]->header->width;
+        j["height"]=info.animation[i]->header->height;
+        j["header_size"]=info.animation[i]->header->header_size;
+        */
+
+        //j["duration"]=info.animation[i]->duration;
+        /*for(size_t k = 0; k < info.animation[i]->header->num_tags; k++)
+                {   
+                    j["tags"]={info.animation[i]->header->tags[k]};
+                }
+    
+    }*/
+    
+}
 
 //prints the json object to stdout 
 static void serialize_write(const json& j)
@@ -45,16 +69,8 @@ int main(int argc, char **argv)
         try
         {   
             ParsedInfo info = parser.parse_file(&file);
-            cout << "header len:\t" << info.caff_header.header_size << endl;
-            cout << "num anim:\t" << info.caff_header.num_anim << endl;
-            cout << "Credits:\t" << info.credits.toString() << endl;
-            for (int i = 0; i < info.caff_header.num_anim; i++)
-            {
-                cout << "Animation" << i + 1 << ":\t"
-                     << "duration: " << info.animation[i].duration
-                     << "\theader: " << info.animation[i].header.header_size
-                     << "\tcontent: " << info.animation[i].header.content_size << endl;
-            }
+            serialize(j,info);
+            serialize_write(j);
         }
         catch (ParserException &e)
         {
