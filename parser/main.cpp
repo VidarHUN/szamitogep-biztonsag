@@ -8,27 +8,15 @@ using json = nlohmann::json_abi_v3_11_2::json;
 
 //nem lehetett tagfüggvény, csak felül kell írni és meghívni
 void serialize(json& j, const ParsedInfo& info){
-    j["blk_info"] = {{"blk_type", info.blk_info.type}, {"blk_length", info.blk_info.length}};
-    j["caff_header"] = {{"caff_header_size", info.caff_header.header_size}, 
-                       {"caff_header_num_anim", info.caff_header.num_anim}};
-    j["caff_credits"]={{"year", info.credits.YY},
-                       {"month", info.credits.M},
-                       {"day", info.credits.D},
-                       {"hour", info.credits.h},
-                       {"minute", info.credits.m},
-                       {"creator", info.credits.creator}};
-    j["animations"]={
-                    {"duration", info.animation->duration},
-                    {   {"ciff_header_size", info.animation->header.header_size}, 
-                        {"ciff_header_content_size", info.animation->header.content_size},
-                        {"ciff_header_width", info.animation->header.width},
-                        {"ciff_header_height", info.animation->header.height},
-                        {"ciff_header_caption", info.animation->header.caption}
-                        //{"ciff_header_tags", info.animation->header.tags}}
-                        }
-                    ///TO DO dinamikus tömböket serializálni header tags is ilyen, asszem
-                    //{"img", info.animation->img}    
-                    };
+    j["num_anim"] =  info.caff_header.num_anim;
+    j["year"] = info.credits.YY;
+    j["month"] = info.credits.M;
+    j["day"]= info.credits.D;
+    j["hour"]=info.credits.h;
+    j["minute"]=info.credits.m;
+    j["creator"]= info.credits.creator;
+    j["captions"]=info.animation->header.caption;
+    //j["animation"]= {}
 }
 
 
