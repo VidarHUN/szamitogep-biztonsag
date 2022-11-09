@@ -25,7 +25,7 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
     }
     catch (ParserException &e)
     {
-        delete bytes;
+        delete[] bytes;
         throw e;
     }
 
@@ -41,7 +41,7 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
     // if (typ != 2 && typ != 3)
     if (blk_type != CAFFBlockType::Credits)
         throw ParserException("Credits block must come after the header.");
-    delete bytes;
+    delete[] bytes;
     bytes = next_block(file, blk_len);
     try
     {
@@ -49,21 +49,31 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
     }
     catch (std::exception &e)
     {
-        delete bytes;
+        delete[] bytes;
         throw e;
     }
 
     // Animation blocks
     animation = new CaffAnimation *[header.num_anim];
-    for (int i = 0; i < header.num_anim; i++)
+    try
     {
-        blk_type = next_block_info(file, blk_len);
-        if (blk_type != CAFFBlockType::Animation)
-            throw ParserException("Animation block must come after credits.");
-        delete bytes;
-        bytes = next_block(file, blk_len);
-        animation[i] = parse_animation(bytes, blk_len);
+        for (int i = 0; i < header.num_anim; i++)
+        {
+            blk_type = next_block_info(file, blk_len);
+            if (blk_type != CAFFBlockType::Animation)
+                throw ParserException("Animation block must come after credits.");
+            delete[] bytes;
+            bytes = next_block(file, blk_len);
+            animation[i] = parse_animation(bytes, blk_len);
+        }
     }
+    catch (ParserException &e)
+    {
+        delete[] bytes;
+        throw e;
+    }
+
+    delete[] bytes;
 
     ParsedInfo pi;
     pi.caff_header = header;
@@ -112,7 +122,12 @@ CaffCredits CAFFParser::parse_credits(char *bytes)
         if (creator_len == 0)
             credits.creator == "";
         else
-            credits.creator = bytes_to_string(bytes, 14, 14 + creator_len);
+        {
+            string creator;
+            for (int i = 14; i < 14 + creator_len; i++)
+                creator += bytes[i];
+            credits.creator = creator;
+        }
         return credits;
     }
     catch (std::invalid_argument &e)
@@ -125,9 +140,18 @@ CaffAnimation *CAFFParser::parse_animation(char *bytes, uint64_t blk_len)
 {
     CaffAnimation *animation = new CaffAnimation();
     animation->duration = convert_8_bytes(bytes);
-    animation->header = parse_ciff_header(bytes + 8, blk_len);
+    try
+    {
+        animation->header = parse_ciff_header(bytes + 8, blk_len);
+    }
+    catch (ParserException &e)
+    {
+        delete animation;
+        throw e;
+    }
     char *img = new char[animation->header->content_size];
     memcpy(img, bytes + 8 + animation->header->header_size, animation->header->content_size);
+    animation->img = img;
     return animation;
 }
 
@@ -143,9 +167,15 @@ CiffHeader *CAFFParser::parse_ciff_header(char *bytes, uint64_t blk_len)
     header->width = convert_8_bytes(bytes + 20);
     header->height = convert_8_bytes(bytes + 28);
     if (blk_len != header->header_size + header->content_size + 8)
+    {
+        delete header;
         throw ParserException("CIFF size attributes do not match.");
+    }
     if (bytes[header->header_size - 1] != '\n' && bytes[header->header_size - 1] != '\0')
+    {
+        delete header;
         throw ParserException("Problem with CIFF Caption/tags ending character.");
+    }
     parse_ciff_strings(bytes, *header);
     return header;
 }

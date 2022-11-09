@@ -43,7 +43,7 @@ struct CaffAnimation
     ~CaffAnimation()
     {
         if (img != nullptr)
-            delete img;
+            delete[] img;
         if (header != nullptr)
             delete header;
     }

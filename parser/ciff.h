@@ -20,6 +20,8 @@ struct CiffHeader
     {
         if (tags != nullptr)
         {
+            for (size_t i = 0; i < num_tags; i++)
+                delete tags[i];
             delete[] tags;
         }
     }

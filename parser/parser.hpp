@@ -22,7 +22,11 @@ struct ParsedInfo
     ~ParsedInfo()
     {
         if (animation != nullptr)
+        {
+            for (size_t i = 0; i < caff_header.num_anim; i++)
+                delete animation[i];
             delete[] animation;
+        }
     }
 };
 
@@ -101,7 +105,9 @@ public:
     }
     ~CAFFParser()
     {
-        delete buf1, buf4, buf8;
+        delete[] buf1;
+        delete[] buf4;
+        delete[] buf8;
     }
 
     ParsedInfo parse_file(std::ifstream *file);
