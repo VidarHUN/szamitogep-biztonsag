@@ -3,8 +3,7 @@
 #include "caff.h"
 #include <stdexcept>
 #include <ctime>
-#include <iostream>
-#include <filesystem>
+#include <sys/stat.h>
 
 ParsedInfo CAFFParser::parse_file(std::ifstream *file)
 {
@@ -138,8 +137,11 @@ CaffCredits CAFFParser::parse_credits(char *bytes)
 
 void create_ppm_image(char *img, CiffHeader *header, int num_anim)
 {
-    size_t SIZE = header->width * header->height;
-
+    struct stat st;
+    if (stat("ppm", &st) != 0)
+    {
+        mkdir("ppm", S_IRWXU | S_IRWXG);
+    }
     try
     {
         std::ofstream myImage("ppm/image" + to_string(num_anim) + ".ppm", ios::out | ios::binary);

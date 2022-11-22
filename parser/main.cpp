@@ -52,30 +52,31 @@ static void serialize_write(const json &j)
 
 int main(int argc, char **argv)
 {
-    ifstream file("C:\\Users\\Nina\\source\\repos\\szamitogep-biztonsag\\parser\\caff_files\\1.caff", ios::in | ios::out | ios::binary);
-
-    if (!file.is_open())
+    if (argc < 2)
     {
-        cout << "FATAL: File caff_files/.caff could not be opened.\n";
-        return 1;
+        cout << "Give me a PPM image pls.." << endl;
+        return 42;
     }
-    else
+    string filename = string(argv[1]);
+    ifstream file;
+    try
     {
+        file.open(filename.c_str(), ios::in | ios::out | ios::binary);
         CAFFParser parser;
         json j;
-        try
-        {
-            ParsedInfo info = parser.parse_file(&file);
-            serialize(j, info);
-            serialize_write(j);
-        }
-        catch (ParserException &e)
-        {
-            cout << e.what() << endl;
-            file.close();
-            return 1;
-        }
+
+        ParsedInfo info = parser.parse_file(&file);
+        serialize(j, info);
+        serialize_write(j);
     }
+    catch (exception &e)
+    {
+        cout << e.what() << endl;
+        if (file.is_open())
+            file.close();
+        return 1;
+    }
+
     file.close();
     return 0;
 }
