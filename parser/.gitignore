@@ -1,5 +1,5 @@
 output
 program
-./*.json
+meta.json
 ppm/*
 
