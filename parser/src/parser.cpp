@@ -14,19 +14,27 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
     uint64_t blk_len;
 
     // First block --> CAFF HEADER
+
     blk_type = next_block_info(file, blk_len);
+
     if (blk_type != CAFFBlockType::Header)
         throw ParserException("First block must be a valid CAFF header");
-    char *bytes = next_block(file, blk_len);
+    char *bytes = nullptr;
     try
     {
+        bytes = next_block(file, blk_len);
         header = parse_header(bytes, blk_len);
+    }
+    catch (std::bad_alloc)
+    {
+        throw ParserException("Invalid memory allocation.");
     }
     catch (ParserException &e)
     {
         delete[] bytes;
         throw e;
     }
+    delete[] bytes;
 
     // El kellene dönteni, hogy:
     // a) csak a header után jöhet a credits, vagy
@@ -36,37 +44,45 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
     // most az a) verzió működik
 
     // Second block
+
     blk_type = next_block_info(file, blk_len);
-    // if (typ != 2 && typ != 3)
+
     if (blk_type != CAFFBlockType::Credits)
         throw ParserException("Credits block must come after the header.");
-    delete[] bytes;
-    bytes = next_block(file, blk_len);
     try
     {
+        bytes = next_block(file, blk_len);
         credits = parse_credits(bytes);
     }
-    catch (std::exception &e)
+    catch (std::bad_alloc)
+    {
+        throw ParserException("Invalid memory allocation.");
+    }
+    catch (ParserException &e)
     {
         delete[] bytes;
         throw e;
     }
 
     // Animation blocks
-    animation = new CaffAnimation *[header.num_anim];
     try
     {
+        animation = new CaffAnimation *[header.num_anim];
         for (int i = 0; i < header.num_anim; i++)
         {
+            delete[] bytes;
             blk_type = next_block_info(file, blk_len);
             if (blk_type != CAFFBlockType::Animation)
                 throw ParserException("Animation block must come after credits.");
-            delete[] bytes;
             bytes = next_block(file, blk_len);
             animation[i] = parse_animation(bytes, blk_len, i);
         }
     }
-    catch (exception &e)
+    catch (std::bad_alloc)
+    {
+        throw ParserException("Invalid memory allocation.");
+    }
+    catch (ParserException &e)
     {
         delete[] bytes;
         throw e;
@@ -105,34 +121,35 @@ CaffCredits CAFFParser::parse_credits(char *bytes)
     CaffCredits credits;
     time_t now = time(0);
     tm *ltm = localtime(&now);
+
+    credits.YY = (uint16_t)((uint8_t)(bytes[1]) << 8 | (uint8_t)(bytes[0]));
+    credits.M = (uint8_t)(bytes[2]);
+    credits.D = (uint8_t)(bytes[3]);
+    credits.h = (uint8_t)(bytes[4]);
+    credits.m = (uint8_t)(bytes[5]);
     try
     {
-        credits.YY = (uint16_t)((uint8_t)(bytes[1]) << 8 | (uint8_t)(bytes[0]));
         check_interval(credits.YY, 1900, 1900 + ltm->tm_year);
-        credits.M = (uint8_t)(bytes[2]);
         check_interval(credits.M, 1, 12);
-        credits.D = (uint8_t)(bytes[3]);
         check_interval(credits.D, 1, ltm->tm_mday);
-        credits.h = (uint8_t)(bytes[4]);
         check_interval(credits.h, 0, 24);
-        credits.m = (uint8_t)(bytes[5]);
         check_interval(credits.m, 0, 60);
-        auto creator_len = (uint64_t)(bytes[6]);
-        if (creator_len == 0)
-            credits.creator == "";
-        else
-        {
-            string creator;
-            for (int i = 14; i < 14 + creator_len; i++)
-                creator += bytes[i];
-            credits.creator = creator;
-        }
-        return credits;
     }
     catch (std::invalid_argument &e)
     {
-        throw;
+        throw ParserException(string("Invalid argument value in credits: ") + string(e.what()));
     }
+    auto creator_len = (uint64_t)(bytes[6]);
+    if (creator_len == 0)
+        credits.creator == "";
+    else
+    {
+        string creator;
+        for (int i = 14; i < 14 + creator_len; i++)
+            creator += bytes[i];
+        credits.creator = creator;
+    }
+    return credits;
 }
 
 void create_ppm_image(char *img, CiffHeader *header, int num_anim)
@@ -142,28 +159,22 @@ void create_ppm_image(char *img, CiffHeader *header, int num_anim)
     {
         mkdir("ppm", S_IRWXU | S_IRWXG);
     }
-    try
-    {
-        std::ofstream myImage("ppm/image" + to_string(num_anim) + ".ppm", ios::out | ios::binary);
 
-        const int width = header->width, height = header->height;
+    std::ofstream myImage("ppm/image" + to_string(num_anim) + ".ppm", ios::out | ios::binary);
 
-        {                                              // Image header - Need this to start the image properties
-            myImage << "P6" << endl;                   // Declare that you want to use ASCII colour values
-            myImage << width << " " << height << endl; // Declare w & h
-            myImage << "255" << endl;                  // Declare max colour ID
-        }
+    const int width = header->width, height = header->height;
 
-        for (size_t i = 0; i < width * height * 3; i++)
-        {
-            myImage << static_cast<unsigned char>(img[i]);
-        }
-        myImage.close();
+    {                                              // Image header - Need this to start the image properties
+        myImage << "P6" << endl;                   // Declare that you want to use ASCII colour values
+        myImage << width << " " << height << endl; // Declare w & h
+        myImage << "255" << endl;                  // Declare max colour ID
     }
-    catch (exception &e)
+
+    for (size_t i = 0; i < width * height * 3; i++)
     {
-        throw e;
+        myImage << static_cast<unsigned char>(img[i]);
     }
+    myImage.close();
 
     return;
 }
@@ -183,14 +194,7 @@ CaffAnimation *CAFFParser::parse_animation(char *bytes, uint64_t blk_len, int nu
     }
     char *img = new char[animation->header->content_size];
     memcpy(img, bytes + 8 + animation->header->header_size, animation->header->content_size);
-    try
-    {
-        create_ppm_image(img, animation->header, num_anim);
-    }
-    catch (exception &e)
-    {
-        throw e;
-    }
+    create_ppm_image(img, animation->header, num_anim);
     animation->img = img;
     return animation;
 }
@@ -216,7 +220,14 @@ CiffHeader *CAFFParser::parse_ciff_header(char *bytes, uint64_t blk_len)
         delete header;
         throw ParserException("Problem with CIFF Caption/tags ending character.");
     }
-    parse_ciff_strings(bytes, *header);
+    try
+    {
+        parse_ciff_strings(bytes, *header);
+    }
+    catch (std::bad_alloc)
+    {
+        throw ParserException("Invalid memory allocation");
+    }
     return header;
 }
 

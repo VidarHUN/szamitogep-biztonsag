@@ -7,8 +7,6 @@
 #include <stdexcept>
 #include "json.hpp"
 
-
-
 struct BlockInfo
 {
     uint8_t type;
@@ -33,6 +31,16 @@ struct ParsedInfo
     }
 };
 
+class ParserException : public std::exception
+{
+private:
+    string msg;
+
+public:
+    ParserException(string s) : msg(s) {}
+    const char *what() { return msg.c_str(); }
+};
+
 class CAFFParser
 {
 private:
@@ -53,9 +61,10 @@ private:
     CaffAnimation *parse_animation(char *bytes, uint64_t blk_len, int num_anim);
     CiffHeader *parse_ciff_header(char *bytesm, uint64_t blk_len);
 
-    inline CAFFBlockType next_block_info(std::ifstream *file, uint64_t &len)
+    CAFFBlockType next_block_info(std::ifstream *file, uint64_t &len)
     {
-        auto typ = read_block_type(file);
+        uint8_t typ;
+        typ = read_block_type(file);
         len = read_block_len(file);
         switch (typ)
         {
@@ -120,13 +129,4 @@ void parse_ciff_strings(char *bytes, CiffHeader &);
 char *parse_caption(char *bytes, CiffHeader &);
 void parse_tags(char *, char *, CiffHeader &);
 
-class ParserException : public std::exception
-{
-private:
-    string msg;
-
-public:
-    ParserException(string s) : msg(s) {}
-    const char *what() { return msg.c_str(); }
-};
 #endif // PARSER_HPP

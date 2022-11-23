@@ -69,14 +69,21 @@ int main(int argc, char **argv)
         serialize(j, info);
         serialize_write(j);
     }
-    catch (exception &e)
+    catch (ParserException &e)
     {
         cout << e.what() << endl;
         if (file.is_open())
             file.close();
         return 1;
     }
-
+    catch (json::exception &e)
+    {
+        cout << e.what() << endl;
+        if (file.is_open())
+            file.close();
+        return 1;
+    }
+    cout << "OK" << endl;
     file.close();
     return 0;
 }
