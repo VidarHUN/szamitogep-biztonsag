@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <ctime>
 #include <sys/stat.h>
+#include <iostream>
 
 ParsedInfo CAFFParser::parse_file(std::ifstream *file)
 {
@@ -15,24 +16,34 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
 
     // First block --> CAFF HEADER
 
-    blk_type = next_block_info(file, blk_len);
+    try
+    {
+        blk_type = next_block_info(file, blk_len);
+    }
+    catch (ParserException &e)
+    {
+        throw e;
+    }
 
     if (blk_type != CAFFBlockType::Header)
+    {
         throw ParserException("First block must be a valid CAFF header");
+    }
     char *bytes = nullptr;
+
     try
     {
         bytes = next_block(file, blk_len);
         header = parse_header(bytes, blk_len);
     }
-    catch (std::bad_alloc)
-    {
-        throw ParserException("Invalid memory allocation.");
-    }
     catch (ParserException &e)
     {
         delete[] bytes;
         throw e;
+    }
+    catch (std::bad_alloc)
+    {
+        throw ParserException("Invalid memory allocation.");
     }
     delete[] bytes;
 
@@ -45,23 +56,32 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
 
     // Second block
 
-    blk_type = next_block_info(file, blk_len);
+    try
+    {
+        blk_type = next_block_info(file, blk_len);
+    }
+    catch (ParserException &e)
+    {
+        throw e;
+    }
 
     if (blk_type != CAFFBlockType::Credits)
+    {
         throw ParserException("Credits block must come after the header.");
+    }
     try
     {
         bytes = next_block(file, blk_len);
-        credits = parse_credits(bytes);
-    }
-    catch (std::bad_alloc)
-    {
-        throw ParserException("Invalid memory allocation.");
+        credits = parse_credits(bytes, blk_len);
     }
     catch (ParserException &e)
     {
         delete[] bytes;
         throw e;
+    }
+    catch (std::bad_alloc)
+    {
+        throw ParserException("Invalid memory allocation.");
     }
 
     // Animation blocks
@@ -73,20 +93,25 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
             delete[] bytes;
             blk_type = next_block_info(file, blk_len);
             if (blk_type != CAFFBlockType::Animation)
+            {
                 throw ParserException("Animation block must come after credits.");
+            }
             bytes = next_block(file, blk_len);
             animation[i] = parse_animation(bytes, blk_len, i);
         }
-    }
-    catch (std::bad_alloc)
-    {
-        throw ParserException("Invalid memory allocation.");
     }
     catch (ParserException &e)
     {
         delete[] bytes;
         throw e;
     }
+    catch (std::bad_alloc)
+    {
+        throw ParserException("Invalid memory allocation.");
+    }
+
+    if (file->peek() != EOF)
+        throw ParserException("File unnecessarily longer than needed. You are a bad man.");
 
     delete[] bytes;
 
@@ -116,7 +141,7 @@ CaffHeader CAFFParser::parse_header(char *bytes, uint64_t blk_len)
     return header;
 }
 
-CaffCredits CAFFParser::parse_credits(char *bytes)
+CaffCredits CAFFParser::parse_credits(char *bytes, uint64_t blk_len)
 {
     CaffCredits credits;
     time_t now = time(0);
@@ -139,7 +164,10 @@ CaffCredits CAFFParser::parse_credits(char *bytes)
     {
         throw ParserException(string("Invalid argument value in credits: ") + string(e.what()));
     }
-    auto creator_len = (uint64_t)(bytes[6]);
+    auto creator_len = convert_8_bytes(bytes + 6);
+    if (6 + 8 + creator_len != blk_len)
+        throw ParserException("Bad kitty, credits block length - creator length mismatch.");
+
     if (creator_len == 0)
         credits.creator == "";
     else
@@ -204,7 +232,9 @@ CiffHeader *CAFFParser::parse_ciff_header(char *bytes, uint64_t blk_len)
     char magic[4];
     std::memcpy(magic, bytes, 4);
     if ((int)*magic != (int)*_ciffmagic)
+    {
         throw ParserException("WRONG CIFF MAGIC");
+    }
     CiffHeader *header = new CiffHeader();
     header->header_size = convert_8_bytes(bytes + 4);
     header->content_size = convert_8_bytes(bytes + 12);
@@ -256,6 +286,8 @@ char *parse_caption(char *bytes, CiffHeader &header)
 void parse_tags(char *bytes, char *sep, CiffHeader &header)
 {
     int num_tags = 0;
+    if (bytes[header.header_size - 1] != '\0')
+        throw ParserException("No trailing zero found in tags section.");
     for (char *p = sep + 1; p < bytes + header.header_size; p++)
         if (*p == '\0')
             num_tags++;

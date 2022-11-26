@@ -57,7 +57,7 @@ private:
     char _ciffmagic[4] = {0x43, 0x49, 0x46, 0x46};
 
     CaffHeader parse_header(char *bytes, uint64_t blk_len);
-    CaffCredits parse_credits(char *bytes);
+    CaffCredits parse_credits(char *bytes, uint64_t);
     CaffAnimation *parse_animation(char *bytes, uint64_t blk_len, int num_anim);
     CiffHeader *parse_ciff_header(char *bytesm, uint64_t blk_len);
 
@@ -81,6 +81,8 @@ private:
 
     inline char *next_block(std::ifstream *file, uint64_t len)
     {
+        if (len == 0)
+            throw ParserException("Length in CAFF block is zero.");
         char *bytes = new char[len];
         file->read(bytes, len);
         return bytes;
@@ -88,13 +90,27 @@ private:
 
     inline uint8_t read_block_type(std::ifstream *file)
     {
-        file->read(buf1, 1);
+        try
+        {
+            file->read(buf1, 1);
+        }
+        catch (std::exception)
+        {
+            throw ParserException("Cannot read more bytes from file.");
+        }
         return (uint8_t)(*buf1);
     }
 
     inline uint64_t read_block_len(std::ifstream *file)
     {
-        file->read(buf8, 8);
+        try
+        {
+            file->read(buf8, 8);
+        }
+        catch (std::exception)
+        {
+            throw ParserException("Cannot read more bytes from file.");
+        }
         return convert_8_bytes(buf8);
     }
 
