@@ -1,5 +1,5 @@
-program: parser.o caff.o main.cpp
-	g++ main.cpp parser.o caff.o -o ../program -std=c++14 -O3
+parser: parser.o caff.o main.cpp
+	g++ main.cpp parser.o caff.o -o ../parser -std=c++14 -O3
 	rm *.o
 
 parser.o: parser.cpp parser.hpp

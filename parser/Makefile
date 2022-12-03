@@ -1,5 +1,5 @@
 all: 
-	$(MAKE) -C src program
+	$(MAKE) -C src parser
 
 clean:
-	rm *.o program
+	rm parser
