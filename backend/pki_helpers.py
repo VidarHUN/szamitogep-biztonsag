@@ -12,7 +12,7 @@ def generate_private_key(filename: str, passphrase: str):
     private_key = rsa.generate_private_key(
         public_exponent=65537, key_size=2048, backend=default_backend()
     )
-    
+
     # Encryption algs used on the private key
     utf8_pass = passphrase.encode("utf-8")
     algorithm = serialization.BestAvailableEncryption(utf8_pass)
