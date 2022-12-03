@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginTop="5sp"
+    android:background="@drawable/recycler_item_background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="140sp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/imageViewRecyclerItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:adjustViewBounds="true"
+            android:maxHeight="130sp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/art_gallery"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:layout_margin="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/gifImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:maxHeight="130sp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/giphy1" />
+        </LinearLayout>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/textViewTitleRecyclerItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="Title of the CAFF"
+            android:textColor="@color/appColor1"
+            android:layout_marginEnd="5sp"
+            android:textSize="18sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonAddToCart"
+            android:layout_width="wrap_content"
+            android:paddingStart="30sp"
+            android:paddingEnd="30sp"
+            android:layout_height="40sp"
+            android:layout_marginEnd="5sp"
+            android:layout_marginTop="30sp"
+            android:layout_gravity="right"
+            android:background="@drawable/my_button_blue"
+            android:text="Add to cart"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
+
+</LinearLayout>

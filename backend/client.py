@@ -11,5 +11,5 @@ def upload():
     print(response.content)
 
 if __name__ == "__main__":
-    # get_secret_message()
-    upload()
+    get_secret_message()
+    # upload()
