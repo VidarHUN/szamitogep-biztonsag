@@ -28,7 +28,7 @@ class WebShopViewModel : ViewModel() {
             requestMethod = "GET"  // optional default is GET
 
             println("\nSent 'GET' request to URL : $url; Response Code : $responseCode")
-
+            var =1
             inputStream.bufferedReader().use {
                 it.lines().forEach { line ->
                     println(line)
