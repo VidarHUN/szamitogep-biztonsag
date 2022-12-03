@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.example.myapplication.ui.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_webshop"
+            app:destination="@id/navigation_webshop"
+            app:popUpTo='@+id/navigation_home'
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_cart"
+            app:destination="@id/navigation_cart"
+            app:popUpTo='@+id/navigation_home'
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_profile"
+            app:destination="@id/navigation_profile_menu"
+            app:popUpTo='@+id/navigation_home'
+            app:popUpToInclusive="true"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_webshop"
+        android:name="com.example.myapplication.ui.webshop.webshoplistitems.WebShopFragment"
+        android:label="@string/title_webshop"
+        tools:layout="@layout/fragment_webshop" >
+        <action
+            android:id="@+id/action_navigation_webshop_to_navigation_webshop_item_details"
+            app:destination="@id/navigation_webshop_item_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_cart"
+        android:name="com.example.myapplication.ui.cart.CartFragment"
+        android:label="@string/title_cart"
+        tools:layout="@layout/fragment_cart" />
+
+    <fragment
+        android:id="@+id/navigation_profile_menu"
+        android:name="com.example.myapplication.ui.profile.profilemenu.ProfileMenuFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile_menu" >
+        <action
+            android:id="@+id/action_navigation_profile_menu_to_navigation_profile_check"
+            app:destination="@id/navigation_profile_check"
+            app:popUpTo='@+id/navigation_home'
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_navigation_profile_menu_to_navigation_profile"
+            app:destination="@id/navigation_profile" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_profile_check"
+        android:name="com.example.myapplication.ui.profile.profilecheck.ProfileCheckFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile_check" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.example.myapplication.ui.profile.profilesettings.ProfileSettingsFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_navigation_profile_to_navigation_profile_menu"
+            app:destination="@id/navigation_profile_menu" />
+        <action
+            android:id="@+id/action_navigation_profile_to_navigation_profile_check"
+            app:destination="@id/navigation_profile_check" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_webshop_item_details"
+        android:name="com.example.myapplication.ui.webshop.webshopitemdetails.WebShopItemDetailsFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_webshop_item_details" >
+    </fragment>
+</navigation>

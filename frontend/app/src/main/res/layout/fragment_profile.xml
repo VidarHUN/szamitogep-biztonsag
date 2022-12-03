@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1d1c21"
+    tools:context=".ui.profile.profilesettings.ProfileSettingsFragment">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:maxWidth="60sp"
+        android:scaleType="fitCenter"
+        android:layout_marginTop="30sp"
+        android:layout_marginEnd="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/art_gallery" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40sp"
+        android:layout_marginTop="30sp"
+        android:text="My profile"
+        android:textColor="@color/appColor1"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/imageView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:maxWidth="130dp"
+        android:layout_marginTop="20sp"
+        app:layout_constraintTop_toBottomOf="@+id/textView12"
+        app:srcCompat="@drawable/profile_picture_background" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:padding="0dp"
+        android:textAllCaps="false"
+        android:text="Set profile picture"
+        android:textColor="@color/appColor1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView10" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button2">
+
+        <TextView
+            android:id="@+id/textView14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40sp"
+            android:layout_marginEnd="40sp"
+            android:text="Username"
+            android:textColor="@color/appColor1"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/editTextMyProfileUsername"
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:layout_marginStart="40sp"
+            android:layout_marginEnd="40sp"
+            android:layout_marginBottom="10sp"
+            android:backgroundTint="@color/appColor1"
+            android:ems="10"
+            android:hint="Username"
+            android:inputType="textPersonName"
+            android:textColor="@color/appColor1"
+            android:textColorHint="@color/appColor2" />
+
+        <TextView
+            android:id="@+id/textView15"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40sp"
+            android:layout_marginEnd="40sp"
+            android:text="Email address"
+            android:textColor="@color/appColor1"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/editTextMyProfileEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:layout_marginStart="40sp"
+            android:layout_marginEnd="40sp"
+            android:layout_marginBottom="10sp"
+            android:backgroundTint="@color/appColor1"
+            android:ems="10"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/appColor1"
+            android:textColorHint="@color/appColor2" />
+
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40sp"
+            android:layout_marginEnd="40sp"
+            android:text="Change password"
+            android:textColor="@color/appColor1"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/editTextMyProfilePassword1"
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:layout_marginStart="40sp"
+            android:layout_marginEnd="40sp"
+            android:layout_marginBottom="10sp"
+            android:backgroundTint="@color/appColor1"
+            android:ems="10"
+            android:hint="Password"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/appColor1"
+            android:textColorHint="@color/appColor2" />
+
+        <EditText
+            android:id="@+id/editTextMyProfilePassword2"
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:layout_marginStart="40sp"
+            android:layout_marginEnd="40sp"
+            android:layout_marginBottom="20sp"
+            android:backgroundTint="@color/appColor1"
+            android:ems="10"
+            android:hint="Password again"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/appColor1"
+            android:textColorHint="@color/appColor2" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonSaveChanges"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40sp"
+            android:layout_marginEnd="40sp"
+            android:layout_marginBottom="20sp"
+            android:background="@drawable/my_button_blue"
+            android:padding="10dp"
+            android:text="Save changes"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
