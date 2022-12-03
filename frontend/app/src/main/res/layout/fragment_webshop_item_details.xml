@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appColorBackground1"
+    tools:context=".ui.webshop.webshopitemdetails.WebShopItemDetailsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/appColorBackground1"
+        tools:context=".ui.webshop.webshopitemdetails.WebShopItemDetailsFragment">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:maxWidth="40sp"
+            android:scaleType="fitCenter"
+            android:layout_marginTop="20sp"
+            android:layout_marginEnd="30sp"
+            android:layout_marginBottom="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/art_gallery" />
+
+        <TextView
+            android:id="@+id/textViewWebShopItemDetailTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"
+            android:text="Image title"
+            android:textColor="@color/appColor1"
+            android:textSize="25sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/constraintLayoutImage"
+            app:layout_constraintBottom_toTopOf="@+id/buttonSaveChanges"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView">
+
+            <ImageView
+                android:id="@+id/imageViewWebShopItemDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:maxHeight="350sp"
+                android:scaleType="fitCenter"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/art_gallery" />
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/gifImageViewDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:maxHeight="350sp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/giphy1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+        <TextView
+            android:id="@+id/textViewWebShopItemDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"
+            android:text="Comments"
+            android:textColor="@color/appColor1"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonSaveChanges" />
+
+        <EditText
+            android:id="@+id/editTextWriteAComment"
+            android:layout_width="match_parent"
+            android:layout_height="45sp"
+            android:background="@drawable/my_edittext"
+            android:layout_marginEnd="20sp"
+            android:layout_marginStart="20sp"
+            android:layout_marginTop="10sp"
+            android:ems="10"
+            android:hint="Write a comment"
+            android:paddingStart="10sp"
+            android:paddingEnd="10sp"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/appColor1"
+            android:textColorHint="@color/appColor2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewWebShopItemDetail" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonPostComment"
+            android:layout_width="wrap_content"
+            android:layout_height="40sp"
+            android:layout_gravity="right"
+            android:layout_marginStart="20sp"
+            android:layout_marginEnd="20sp"
+            android:layout_marginTop="10sp"
+            android:layout_marginBottom="10sp"
+            android:background="@drawable/my_button_purple"
+            android:paddingStart="30sp"
+            android:paddingEnd="30sp"
+            android:text="Comment"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextWriteAComment" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonSaveChanges"
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:layout_gravity="right"
+            android:layout_margin="20sp"
+            android:background="@drawable/my_button_blue"
+            android:paddingStart="30sp"
+            android:paddingEnd="30sp"
+            android:text="Add to cart"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayoutImage" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewWebShopDetailsComments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7sp"
+            android:layout_marginEnd="7sp"
+            android:layout_marginTop="10sp"
+            android:nestedScrollingEnabled="false"
+            android:padding="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonPostComment" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>
