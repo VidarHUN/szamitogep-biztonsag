@@ -21,20 +21,17 @@ class WebShopViewModel : ViewModel() {
     var caffList: ArrayList<WebShopItem> = ArrayList()
     val caffArray = arrayOf("0")
 
-    fun sendGet() {
-        val url = URL("https://localhost:8443/request/list")
+    OkHttpClient client = new OkHttpClient()
+    Request getRequest = new Request.Builder()
+    //if localhost not works, should try the actual IP address of the device or 127.0.0.1
+    .url("https://localhost:5683")
+    .build();
 
-        with(url.openConnection() as HttpURLConnection) {
-            requestMethod = "GET"  // optional default is GET
-
-            println("\nSent 'GET' request to URL : $url; Response Code : $responseCode")
-            var =1
-            inputStream.bufferedReader().use {
-                it.lines().forEach { line ->
-                    println(line)
-                }
-            }
-        }
+    try {
+        Response response = client.newCall(getRequest).execute();
+        System.out.println(response.body().string());
+    } catch (IOException e) {
+        e.printStackTrace();
     }
 
     fun setCAFFList(view: View){
