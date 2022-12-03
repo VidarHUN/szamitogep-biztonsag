@@ -50,6 +50,12 @@ pip install -r requirements.txt
 uwsgi --master --https 0.0.0.0:8443,domain.crt,domain.key --mount /=server:app
 ```
 
+### Without HTTPS
+
+```
+uwsgi --http-socket 127.0.0.1:5683 --mount /=server:app
+```
+
 ## Test with the client
 
 ```
