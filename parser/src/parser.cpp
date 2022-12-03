@@ -180,33 +180,6 @@ CaffCredits CAFFParser::parse_credits(char *bytes, uint64_t blk_len)
     return credits;
 }
 
-void create_ppm_image(char *img, CiffHeader *header, int num_anim)
-{
-    struct stat st;
-    if (stat("ppm", &st) != 0)
-    {
-        mkdir("ppm", S_IRWXU | S_IRWXG);
-    }
-
-    std::ofstream myImage("ppm/image" + to_string(num_anim) + ".ppm", ios::out | ios::binary);
-
-    const int width = header->width, height = header->height;
-
-    {                                              // Image header - Need this to start the image properties
-        myImage << "P6" << endl;                   // Declare that you want to use ASCII colour values
-        myImage << width << " " << height << endl; // Declare w & h
-        myImage << "255" << endl;                  // Declare max colour ID
-    }
-
-    for (size_t i = 0; i < width * height * 3; i++)
-    {
-        myImage << static_cast<unsigned char>(img[i]);
-    }
-    myImage.close();
-
-    return;
-}
-
 CaffAnimation *CAFFParser::parse_animation(char *bytes, uint64_t blk_len, int num_anim)
 {
     CaffAnimation *animation = new CaffAnimation();
@@ -222,7 +195,6 @@ CaffAnimation *CAFFParser::parse_animation(char *bytes, uint64_t blk_len, int nu
     }
     char *img = new char[animation->header->content_size];
     memcpy(img, bytes + 8 + animation->header->header_size, animation->header->content_size);
-    create_ppm_image(img, animation->header, num_anim);
     animation->img = img;
     return animation;
 }
