@@ -13,26 +13,12 @@ namespace metadata
     // nem lehetett tagfüggvény, csak felül kell írni és meghívni
     void serialize(json &j, const ParsedInfo &info)
     {
-        // j["num_anim"] = info.caff_header.num_anim;
         j["year"] = info.credits.YY;
         j["month"] = info.credits.M;
         j["day"] = info.credits.D;
         j["hour"] = info.credits.h;
         j["minute"] = info.credits.m;
         j["creator"] = info.credits.creator;
-
-        // auto durations = json::array();
-        // auto filenames = json::array();
-        // for (size_t i = 0; i < info.caff_header.num_anim; i++)
-        // {
-        //     stringstream ss;
-        //     ss << i << ".ppm";
-        //     durations += info.animation[0]->duration;
-        //     filenames += ss.str();
-        // }
-        // j["durations"] = durations;
-        // j["filenames"] = filenames;
-
         j["caption"] = info.animation[0]->header->caption;
         j["width"] = info.animation[0]->header->width;
         j["height"] = info.animation[0]->header->height;
