@@ -65,6 +65,7 @@ namespace gifdata
             }
 
             GifWriteFrame(&g, img, width, height, info.animation[i]->duration / 10);
+            delete[] img;
         }
         GifEnd(&g);
     }
