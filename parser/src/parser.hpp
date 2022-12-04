@@ -145,4 +145,8 @@ void parse_ciff_strings(char *bytes, CiffHeader &);
 char *parse_caption(char *bytes, CiffHeader &);
 void parse_tags(char *, char *, CiffHeader &);
 
+// Convert bytes to int
+uint64_t bytes_to_int(const char *buffer, uint64_t start, uint64_t end, bool check = false, uint64_t condition = 0);
+string bytes_to_string(const char *buffer, uint64_t start, uint64_t end, bool check = false, string condition = "");
+
 #endif // PARSER_HPP

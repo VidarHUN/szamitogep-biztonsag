@@ -1,7 +1,6 @@
 #ifndef CAFF_H
 #define CAFF_H
 
-#include <cstdint>
 #include <string>
 #include <sstream>
 #include "ciff.h"
@@ -56,8 +55,4 @@ inline void check_interval(uint64_t x, uint64_t a, uint64_t b)
         throw std::invalid_argument(to_string(a) + " < " + to_string(x) + " < " + to_string(b));
     }
 }
-// Convert bytes to int
-uint64_t bytes_to_int(const char *buffer, uint64_t start, uint64_t end, bool check = false, uint64_t condition = 0);
-string bytes_to_string(const char *buffer, uint64_t start, uint64_t end, bool check = false, string condition = "");
-
 #endif // CAFF_H
