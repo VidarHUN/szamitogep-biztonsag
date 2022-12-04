@@ -58,4 +58,5 @@ dependencies {
     implementation platform("com.google.firebase:firebase-bom:30.5.0")
     implementation "com.google.firebase:firebase-auth-ktx"
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.17'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
 }

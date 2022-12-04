@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.webshop.webshoplistitems
 
 import android.os.Build
+import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
@@ -10,7 +11,9 @@ import com.example.myapplication.R
 import com.example.myapplication.ui.webshop.webshoplistitems.adapter.WebShopItem
 import com.example.myapplication.ui.webshop.webshoplistitems.adapter.WebShopItemAdapter
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.HttpClient
+import okhttp3.*
 import java.io.FileInputStream
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.security.KeyStore
@@ -21,18 +24,35 @@ class WebShopViewModel : ViewModel() {
     var caffList: ArrayList<WebShopItem> = ArrayList()
     val caffArray = arrayOf("0")
 
-    OkHttpClient client = new OkHttpClient()
-    Request getRequest = new Request.Builder()
-    //if localhost not works, should try the actual IP address of the device or 127.0.0.1
-    .url("https://localhost:5683")
-    .build();
+    private val client = OkHttpClient()
 
-    try {
-        Response response = client.newCall(getRequest).execute();
-        System.out.println(response.body().string());
-    } catch (IOException e) {
-        e.printStackTrace();
+    fun getGifs() {
+        val request = Request.Builder()
+            .url("http://192.168.1.70:8443/request/list")
+            .get()
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+
+                    for ((name, value) in response.headers) {
+                        Log.d("TAG", "$name: $value")
+                    }
+                    Log.d("TAG", response.body!!.string())
+                    for (gif in response.body.res) {
+
+                    }
+                }
+            }
+        })
     }
+
 
     fun setCAFFList(view: View){
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerViewWebShop)
@@ -45,7 +65,7 @@ class WebShopViewModel : ViewModel() {
         // GET:localhost:8443/requests/<gif>
 
 
-        sendGet()
+        getGifs()
 
 
         caffList.add(WebShopItem(0, "Birthday cake", R.drawable.image0))
