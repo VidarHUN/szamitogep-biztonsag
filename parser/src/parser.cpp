@@ -96,6 +96,7 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
     catch (ParserException &e)
     {
         delete[] bytes;
+        delete[] animation;
         throw e;
     }
     catch (std::bad_alloc)
