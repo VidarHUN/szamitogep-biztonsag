@@ -226,7 +226,7 @@ CiffHeader *CAFFParser::parse_ciff_header(char *bytes, uint64_t blk_len)
     return header;
 }
 
-void parse_ciff_strings(char *bytes, CiffHeader &header)
+void CAFFParser::parse_ciff_strings(char *bytes, CiffHeader &header)
 {
     char *cap_end = parse_caption(bytes, header);
     if (cap_end < bytes + header.header_size)
@@ -235,7 +235,7 @@ void parse_ciff_strings(char *bytes, CiffHeader &header)
     }
 }
 
-char *parse_caption(char *bytes, CiffHeader &header)
+char *CAFFParser::parse_caption(char *bytes, CiffHeader &header)
 {
     char *beg = bytes + 36;
     char *end = beg;
@@ -248,7 +248,7 @@ char *parse_caption(char *bytes, CiffHeader &header)
     return end;
 }
 
-void parse_tags(char *bytes, char *sep, CiffHeader &header)
+void CAFFParser::parse_tags(char *bytes, char *sep, CiffHeader &header)
 {
     int num_tags = 0;
     if (bytes[header.header_size - 1] != '\0')

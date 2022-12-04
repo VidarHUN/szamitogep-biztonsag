@@ -7,14 +7,8 @@
 #include <stdexcept>
 #include "json.hpp"
 
-struct BlockInfo
-{
-    uint8_t type;
-    uint64_t length;
-};
 struct ParsedInfo
 {
-    BlockInfo blk_info;
     CaffHeader caff_header;
     CaffCredits credits;
     CaffAnimation **animation;
@@ -60,6 +54,10 @@ private:
     CaffCredits parse_credits(char *bytes, uint64_t);
     CaffAnimation *parse_animation(char *bytes, uint64_t blk_len, int num_anim);
     CiffHeader *parse_ciff_header(char *bytesm, uint64_t blk_len);
+
+    void parse_ciff_strings(char *bytes, CiffHeader &);
+    char *parse_caption(char *bytes, CiffHeader &);
+    void parse_tags(char *, char *, CiffHeader &);
 
     CAFFBlockType next_block_info(std::ifstream *file, uint64_t &len)
     {
@@ -140,10 +138,6 @@ public:
 
     ParsedInfo parse_file(std::ifstream *file);
 };
-
-void parse_ciff_strings(char *bytes, CiffHeader &);
-char *parse_caption(char *bytes, CiffHeader &);
-void parse_tags(char *, char *, CiffHeader &);
 
 // Convert bytes to int
 uint64_t bytes_to_int(const char *buffer, uint64_t start, uint64_t end, bool check = false, uint64_t condition = 0);
