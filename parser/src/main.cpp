@@ -46,10 +46,12 @@ namespace metadata
     }
 
     // prints the json object to stdout
-    static void serialize_write(const json &j)
+    static void serialize_write(const json &j, string name)
     {
+        size_t lastindex = name.find_last_of(".");
+        string rawname = name.substr(0, lastindex);
         string s = j.dump();
-        ofstream meta("meta.json", ios::out);
+        ofstream meta(rawname + ".json", ios::out);
         meta << s;
         meta.close();
     }
@@ -88,7 +90,7 @@ void gen_output(ParsedInfo &info, string gifname)
 {
     json j;
     metadata::serialize(j, info);
-    metadata::serialize_write(j);
+    metadata::serialize_write(j, gifname);
     gifdata::createGIF(info, gifname);
 }
 
