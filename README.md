@@ -1,5 +1,11 @@
 # Számítógép biztonság - hitmit
 
+## Git clone
+
+```
+git clone git@github.com:VidarHUN/szamitogep-biztonsag.git --recursive
+```
+
 ## Követelmények
 
 - **Funkcionalitás**
