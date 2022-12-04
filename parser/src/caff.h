@@ -49,9 +49,6 @@ struct CaffAnimation
     }
 };
 
-CaffHeader caff_header(const char *buffer);
-CaffCredits caff_credits(const char *buffer);
-
 inline void check_interval(uint64_t x, uint64_t a, uint64_t b)
 {
     if (x < a || x > b)
