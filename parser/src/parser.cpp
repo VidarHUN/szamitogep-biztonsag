@@ -47,13 +47,6 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
     }
     delete[] bytes;
 
-    // El kellene dönteni, hogy:
-    // a) csak a header után jöhet a credits, vagy
-    // b) csak a header után vagy csak a legvégén, vagy
-    // c) jöhet két animation block között is akár
-
-    // most az a) verzió működik
-
     // Second block
 
     try

@@ -10,7 +10,6 @@ using json = nlohmann::json_abi_v3_11_2::json;
 
 namespace metadata
 {
-    // nem lehetett tagfüggvény, csak felül kell írni és meghívni
     void serialize(json &j, const ParsedInfo &info)
     {
         j["year"] = info.credits.YY;
@@ -31,7 +30,6 @@ namespace metadata
         j["tags"] = tags;
     }
 
-    // prints the json object to stdout
     static void serialize_write(const json &j, string name)
     {
         size_t lastindex = name.find_last_of(".");
