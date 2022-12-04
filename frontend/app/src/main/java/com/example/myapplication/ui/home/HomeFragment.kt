@@ -43,6 +43,10 @@ class HomeFragment : Fragment() {
         binding.constraintWebshop.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_home_to_navigation_webshop)
         }
+
+        binding.constraintWebshop.setOnClickListener {
+            findNavController().navigate(R.id.action_navigation_home_to_navigation_webshop)
+        }
         binding.constraintCart.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_home_to_navigation_cart)
         }

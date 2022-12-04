@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.webshop.webshoplistitems
 
 import android.R
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.databinding.FragmentWebshopBinding
 import com.example.myapplication.ui.webshop.webshoplistitems.adapter.WebShopItem
+import java.io.InputStream
+import java.net.URL
 
 
 class WebShopFragment : Fragment() {
@@ -36,6 +39,7 @@ class WebShopFragment : Fragment() {
             ViewModelProvider(this)[WebShopViewModel::class.java]
         webShopViewModel.setCAFFList(root)
 
+        /*
         val caffListAdapter: ArrayAdapter<String> = ArrayAdapter(
             view.context, android.R.layout.simple_list_item_1, webShopViewModel.caffArray
         )
@@ -57,6 +61,7 @@ class WebShopFragment : Fragment() {
             }
 
         })
+        */
 
     }
 
