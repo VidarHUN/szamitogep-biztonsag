@@ -44,6 +44,19 @@ subject=C = HU, ST = Budapest, L = Budapest, O = hitmit, OU = dev, CN = localhos
 pip install -r requirements.txt
 ```
 
+## Parser binary
+
+You have to copy the parser binary into the backend directory and with chmod give execution rights for every group.
+
+```console
+cd parser
+git submodule init
+git submodule update
+make
+chmod +x parser
+cp parser ../backend
+```
+
 ## Start uWSGI
 
 ```console
