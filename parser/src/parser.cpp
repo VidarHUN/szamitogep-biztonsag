@@ -84,6 +84,7 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
         for (int i = 0; i < header.num_anim; i++)
         {
             delete[] bytes;
+            bytes = nullptr;
             blk_type = next_block_info(file, blk_len);
             if (blk_type != CAFFBlockType::Animation)
             {
@@ -95,7 +96,8 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
     }
     catch (ParserException &e)
     {
-        delete[] bytes;
+        if (bytes != nullptr)
+            delete[] bytes;
         delete[] animation;
         throw e;
     }

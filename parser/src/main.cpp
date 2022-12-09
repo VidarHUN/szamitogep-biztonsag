@@ -124,14 +124,16 @@ int main(int argc, char **argv)
     }
     catch (ParserException &e)
     {
-        cout << e.what() << endl;
+        cerr << "ABORT_PARSE"
+             << " | " << e.what() << endl;
         if (caff.is_open())
             caff.close();
         return 1;
     }
     catch (json::exception &e)
     {
-        cout << e.what() << endl;
+        cerr << "ABORT_PARSE"
+             << " | " << e.what() << endl;
         if (caff.is_open())
             caff.close();
         return 1;
