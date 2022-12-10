@@ -12,7 +12,7 @@ import jwt
 app = Flask(__name__)
 
 app.config['SECRET_KEY']='004f2af45d3a4e161a7dd2d17fdae47f'
-app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///D:\\Work\\sqlite-tools-win32-x86-3400000\\sqlite-tools-win32-x86-3400000\\users.db'
+app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///D:\\Norbi\\sqlite\\users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app)
@@ -72,6 +72,7 @@ def signup_user():
     db.session.commit()
     return jsonify({'message': 'registered successfully'})
 
+#Server error when email is bad
 @app.route('/users/login', methods=['POST'])
 def login_user():
     auth = request.authorization
