@@ -1,5 +1,7 @@
 # Backend
 
+> Only works with python3.9
+
 ## Generate keys
 
 ```console
@@ -40,9 +42,30 @@ subject=C = HU, ST = Budapest, L = Budapest, O = hitmit, OU = dev, CN = localhos
 
 ## Install dependencies
 
+### Configure SQLite3
+
 ```console
-pip install -r requirements.txt
+sudo apt-get update
+sudo apt-get install sqlite3
 ```
+
+> I did not use windows. If you want to run this on windows please find a way for it.
+
+Create db
+
+```console
+cd szamitogep-biztonsag/backend
+sqlite3 users.db
+# Ctrl+d to exit
+```
+
+Change this lin to your db's path:
+
+```python
+app.config['SQLALCHEMY_DATABASE_URI']='sqlite://///home/richard/Desktop/BMEM2/szamitogep-biztonsag/backend/users.db'
+```
+
+> TODO: Use environment variables to this purpose
 
 ## Parser binary
 
@@ -55,6 +78,12 @@ git submodule update
 make
 chmod +x parser
 cp parser ../backend
+```
+
+## Start without hosting server
+
+```console
+python3.9 server.py
 ```
 
 ## Start uWSGI
@@ -74,3 +103,13 @@ uwsgi --http-socket 0.0.0.0:8443 --mount /=server:app
 ```
 python client.py
 ```
+
+## Authentication handling
+
+If you have a registered user, you can login with basic authentication with the email and password. For this purpose, add `username` and `password` field to the HTTP header and give the value to them.
+
+Whenever you `login` with a registered user, you will get a JWT token which is used for later authentication. Please store this token in a global variable during the session when the user uses the app.
+
+It can be read out from the `login` response with the key `token`.
+
+After that, most of the API is available only if you put this `token` into the `x-access-tokens` header field.

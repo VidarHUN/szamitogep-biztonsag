@@ -5,6 +5,10 @@ parser
 *.key
 *.crt
 *.csr
+*.jks
+
+# db
+*.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
