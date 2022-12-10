@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.profile.profilesettings
 
 import android.content.ContentValues.TAG
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,16 +10,21 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.myapplication.MainActivity
 import com.example.myapplication.R
+import com.example.myapplication.auth.SignInActivity
 import com.example.myapplication.databinding.FragmentProfileBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.ktx.Firebase
 
 class ProfileSettingsFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var root: View
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,7 +32,7 @@ class ProfileSettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
-
+        root = binding.root
         firebaseAuth = FirebaseAuth.getInstance()
 
         return binding.root
@@ -35,12 +41,30 @@ class ProfileSettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var success: Boolean = true
+        var delete: Boolean = false
 
         val user = firebaseAuth.currentUser
         user?.let {
-            // Name, email address, and profile photo Url
             binding.editTextMyProfileUsername.hint = user.displayName
             binding.editTextMyProfileEmailAddress.hint = user.email
+        }
+
+        binding.buttonDeleteUser.setOnClickListener {
+            delete = true
+            val user = Firebase.auth.currentUser!!
+
+            firebaseAuth.signOut()
+
+            user.delete()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d(TAG, "User account deleted.")
+                        Toast.makeText(view.context, "User account deleted.", Toast.LENGTH_LONG).show()
+                    }
+                }
+
+            val intent = Intent(view.context, SignInActivity::class.java)
+            startActivity(intent)
         }
 
         binding.buttonSaveChanges.setOnClickListener{
@@ -100,7 +124,7 @@ class ProfileSettingsFragment : Fragment() {
                     Toast.makeText(view.context, "Confirm your new password in the second field", Toast.LENGTH_SHORT).show()
                 }
             }
-            if(success)
+            if(success && !delete)
                 findNavController().navigate(R.id.action_navigation_profile_to_navigation_profile_menu)
         }
     }

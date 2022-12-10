@@ -54,6 +54,7 @@ class WebShopItemAdapter (
         val executor = Executors.newSingleThreadExecutor()
         val handler = Handler(Looper.getMainLooper())
         var image: Bitmap? = null
+        /*
         executor.execute {
 
             // Image URL
@@ -80,8 +81,8 @@ class WebShopItemAdapter (
                 e.printStackTrace()
             }
         }
+        */
 
-        /*
         if(value.string.takeLast(3) == "jpg" || value.string.takeLast(3) == "png"){
             holder.itemView.imageViewRecyclerItem.setImageResource(webShopItems[position].image)
             holder.itemView.gifImageView.setImageResource(0)
@@ -90,7 +91,7 @@ class WebShopItemAdapter (
             holder.itemView.imageViewRecyclerItem.setImageResource(0)
             holder.itemView.gifImageView.setImageResource(webShopItems[position].image)
         }
-        */
+
         holder.itemView.setOnClickListener { v ->
             val activity = v!!.context as AppCompatActivity
             val list: ArrayList<CommentItem> = ArrayList()
