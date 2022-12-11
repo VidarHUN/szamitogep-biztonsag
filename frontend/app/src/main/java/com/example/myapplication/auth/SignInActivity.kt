@@ -57,7 +57,11 @@ class SignInActivity : AppCompatActivity() {
             //TODO passwd should be hashed, SQLI
             val pass = binding.editTextSignInPassword.text.toString()
 
-            sendData(email, pass).start()
+            if (email.isNotEmpty() && pass.isNotEmpty()) {
+                sendData(email, pass).start()
+            } else {
+                Toast.makeText(this, "Make sure to fill every field", Toast.LENGTH_SHORT).show()
+            }
         }
 
     }
@@ -97,29 +101,26 @@ class SignInActivity : AppCompatActivity() {
                     val response = Gson().fromJson(inputStreamReader, Token::class.java)
                     Log.d("A token", response.token)
                     token = response.token
-                    updateUI(email, pass, connection.responseCode)
+                    updateUI(connection.responseCode)
                     inputStreamReader.close()
                     inputSystem.close()
                 }else {
-                    updateUI(email, pass, connection.responseCode)
+                    updateUI(connection.responseCode)
                 }
             }
     }
 
-    private fun updateUI(email: String, pass: String, responseCode: Int) {
+    private fun updateUI(responseCode: Int) {
         runOnUiThread {
             kotlin.run {
-                if (email.isNotEmpty() && pass.isNotEmpty()) {
-                    Log.d("RESPONSE CODE IN IF", responseCode.toString())
-                    if(responseCode == 200){
+                Log.d("RESPONSE CODE IN IF", responseCode.toString())
+                if(responseCode == 200){
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
-                    }else {
-                        Toast.makeText(this, "Authentication failed", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(this, "Make sure to fill every field", Toast.LENGTH_SHORT).show()
+                }else {
+                    Toast.makeText(this, "Authentication failed", Toast.LENGTH_SHORT).show()
                 }
+
             }
         }
     }
