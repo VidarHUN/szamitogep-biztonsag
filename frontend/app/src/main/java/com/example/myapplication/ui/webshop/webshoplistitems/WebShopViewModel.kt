@@ -72,25 +72,24 @@ class WebShopViewModel : ViewModel() {
             .get()
             .build()
 
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
+       // client.newCall(request).enqueue(object : Callback {
+      //      override fun onFailure(call: Call, e: IOException) {
+       //         e.printStackTrace()
             }
 
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+          //  override fun onResponse(call: Call, response: Response) {
+           //     response.use {
+           //         if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
-                    val jsonObject = JSONTokener(response.body!!.string()).nextValue() as JSONObject
-                    val res = jsonObject.getJSONArray("res")
+           //         val jsonObject = JSONTokener(response.body!!.string()).nextValue() as JSONObject
+           //         val res = jsonObject.getJSONArray("res")
 
-                    for (i in 0 until res.length()) {
-                        val gif = res.getString(i)
-                        list.add("http://192.168.1.70:8443/request/$gif")
-                    }
-                }
-            }
-        })
+           //         for (i in 0 until res.length()) {
+           //             val gif = res.getString(i)
+           //             list.add("http://192.168.1.70:8443/request/$gif")
+           //         }
+       //     //}
+       // }
 
 
 
@@ -106,8 +105,8 @@ class WebShopViewModel : ViewModel() {
         // }
 
 //        Log.d("List", list.toString())
-        val webShopItemAdapter = WebShopItemAdapter(caffList, list)
-        recyclerView.adapter = webShopItemAdapter
+      //  val webShopItemAdapter = WebShopItemAdapter(caffList, list)
+     //   recyclerView.adapter = webShopItemAdapter
 
     }
-}
+//}

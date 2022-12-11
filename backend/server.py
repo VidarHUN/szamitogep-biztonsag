@@ -104,36 +104,17 @@ def get_users(current_user):
         'email': user_data.email
     })
 
-@app.route('/users/name', methods=['PUT'])
+@app.route('/users/modify', methods=['PUT'])
 @token_required
-def modify_user_name(current_user):
+def modify_user(current_user):
     # Get name from message body
     name = request.json['name']
-    # Update Users table
-    user = Users.query.filter_by(name=current_user.name).first()
-    user.name = name
-    db.session.commit()
-    return jsonify({'message': 'Modification was successful'})
-
-@app.route('/users/password', methods=['PUT'])
-@token_required
-def modify_user_password(current_user):
-    # Get password from message body
-    hashed_password = generate_password_hash(request.json['password'], method='sha256')
-    # Update Users table
-    user = Users.query.filter_by(name=current_user.name).first()
-
-    user.password = hashed_password
-    db.session.commit()
-    return jsonify({'message': 'Modification was successful'})
-
-@app.route('/users/email', methods=['PUT'])
-@token_required
-def modify_user_email(current_user):
-    # Get email from message body
+    password =  request.json['password']
     email = request.json['email']
     # Update Users table
     user = Users.query.filter_by(name=current_user.name).first()
+    user.name = name
+    user.password = password
     user.email = email
     db.session.commit()
     return jsonify({'message': 'Modification was successful'})
@@ -258,7 +239,7 @@ def postRequest():
 
 @app.route("/request/list", methods=['GET'])
 @token_required
-def getRequest():
+def getRequest(self):
     files = os.listdir("gifs")
     gifs = [file for file in files if file.endswith('.gif')]
     return jsonify({

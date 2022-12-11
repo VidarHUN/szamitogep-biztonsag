@@ -40,11 +40,6 @@ class ProfileCheckFragment : Fragment() {
     private fun getData(): Thread {
         return Thread {
 
-            val jsonObject = JSONObject()
-            // Convert JSONObject to String
-            val jsonObjectString = jsonObject.toString()
-
-
             val url = URL("http://192.168.1.93/users")
             val connection = url.openConnection() as HttpURLConnection
             connection.setRequestProperty(
@@ -58,15 +53,15 @@ class ProfileCheckFragment : Fragment() {
             connection.setRequestProperty("x-access-tokens", SignInActivity.token)
 
             if (connection.responseCode == 200) {
-                Log.e("Connection", "200")
+                Log.d("Connection", "200")
                 val inputSystem = connection.inputStream
                 val inputStreamReader = InputStreamReader(inputSystem, "UTF-8")
                 val response = Gson().fromJson(inputStreamReader, UserProfile::class.java)
 
                 binding.textViewUsername.text = response.name
                 binding.textViewEmailAddress.text = response.email
-                //inputStreamReader.close()
-                //inputSystem.close()
+                inputStreamReader.close()
+                inputSystem.close()
             } else {
                 Log.d("ERROR", "Network error")
             }
