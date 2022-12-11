@@ -54,32 +54,9 @@ class WebShopItemDetailsFragment(var title: String, var imageID: Int, var image:
         root.textViewWebShopItemDetailTitle.text = title
         webShopItemDetailsViewModel.setCommentList(root)
 
-        val db = Firebase.firestore
-        val firebaseAuth = FirebaseAuth.getInstance()
-
-
-
         root.buttonPostComment.setOnClickListener{
-            val docData = hashMapOf(
-                "userID" to firebaseAuth.currentUser,
-                "comment" to "root.editTextWriteAComment.text.toString()"
-            )
-            try {
-                db.collection("commentsAll").document(imageID.toString()).collection("comments").document("f").set(docData)
-                    .addOnSuccessListener {
-                        println("DocumentSnapshot successfully written!")
-                        Log.d(TAG, "DocumentSnapshot successfully written!")
-                    }
-                    .addOnFailureListener {
-                            e -> Log.w(TAG, "Error writing document", e)
-                        println("Error writing document")}
-            }catch (e: Exception){
-                e.printStackTrace()
-            }
-
+            //todo post-olni a kommentet
         }
-
-
     }
 
     override fun onDestroyView() {

@@ -12,7 +12,7 @@ import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.databinding.FragmentCartBinding
 import com.example.myapplication.ui.cart.CartViewModel
 
-class MainActivity : AppCompatActivity() {
+class  MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController

@@ -16,7 +16,7 @@ import com.google.firebase.ktx.Firebase
 class SignUpActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignUpBinding
-    private lateinit var firebaseAuth: FirebaseAuth
+    //private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +28,7 @@ class SignUpActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        firebaseAuth = FirebaseAuth.getInstance()
+        //firebaseAuth = FirebaseAuth.getInstance()
 
         binding.buttonSignUp.setOnClickListener {
             val username = binding.editTextTextPersonName.text.toString()
@@ -38,6 +38,10 @@ class SignUpActivity : AppCompatActivity() {
 
             if (email.isNotEmpty() && pass.isNotEmpty() && confirmPass.isNotEmpty()) {
                 if (pass == confirmPass) {
+                    //ide jon majd a user creation, ha sikeres, akkor ez a kovi ket sor, ha nem, akkor hiba
+                    val intent = Intent(this, SignInActivity::class.java)
+                    startActivity(intent)
+                    /*
                     firebaseAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener {
                         if (it.isSuccessful) {
                             val user = firebaseAuth.currentUser
@@ -56,6 +60,7 @@ class SignUpActivity : AppCompatActivity() {
                             Toast.makeText(this, it.exception.toString(), Toast.LENGTH_LONG).show()
                         }
                     }
+                    */
                 } else {
                     Toast.makeText(this, "Passwords are not matching", Toast.LENGTH_SHORT).show()
                 }
@@ -63,10 +68,5 @@ class SignUpActivity : AppCompatActivity() {
                 Toast.makeText(this, "Make sure to fill every field", Toast.LENGTH_SHORT).show()
             }
         }
-
-        firebaseAuth = FirebaseAuth.getInstance()
-
-
     }
-
 }

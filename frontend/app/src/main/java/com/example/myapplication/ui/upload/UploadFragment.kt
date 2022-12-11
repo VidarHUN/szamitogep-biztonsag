@@ -29,7 +29,6 @@ class UploadFragment : Fragment() {
 
     private var _binding: FragmentUploadBinding? = null
     private val binding get() = _binding!!
-    private lateinit var firebaseAuth: FirebaseAuth
     var pickedImage: Uri? = null
     private lateinit var imageView: ImageView
 
@@ -44,8 +43,6 @@ class UploadFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentUploadBinding.inflate(inflater, container, false)
-
-        firebaseAuth = FirebaseAuth.getInstance()
         imageView = binding.imageViewUploadImage
 
         return binding.root

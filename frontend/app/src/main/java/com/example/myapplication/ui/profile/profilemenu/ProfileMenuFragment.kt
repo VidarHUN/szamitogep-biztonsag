@@ -6,19 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.example.myapplication.MainActivity
 import com.example.myapplication.R
 import com.example.myapplication.auth.SignInActivity
 import com.example.myapplication.databinding.FragmentProfileMenuBinding
 import com.google.firebase.auth.FirebaseAuth
 
 class ProfileMenuFragment : Fragment() {
-
     private var _binding: FragmentProfileMenuBinding? = null
     private val binding get() = _binding!!
-    private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,9 +22,6 @@ class ProfileMenuFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProfileMenuBinding.inflate(inflater, container, false)
-
-        firebaseAuth = FirebaseAuth.getInstance()
-
         return binding.root
     }
 
@@ -48,7 +41,7 @@ class ProfileMenuFragment : Fragment() {
         }
 
         binding.buttonSignOut.setOnClickListener {
-            firebaseAuth.signOut()
+            //kijelentkezés
 
             val intent = Intent(view.context, SignInActivity::class.java)
             startActivity(intent)

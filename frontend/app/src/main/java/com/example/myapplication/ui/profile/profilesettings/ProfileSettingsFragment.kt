@@ -20,10 +20,8 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 
 class ProfileSettingsFragment : Fragment() {
-
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-    private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var root: View
 
     override fun onCreateView(
@@ -33,8 +31,6 @@ class ProfileSettingsFragment : Fragment() {
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         root = binding.root
-        firebaseAuth = FirebaseAuth.getInstance()
-
         return binding.root
     }
 
@@ -43,76 +39,42 @@ class ProfileSettingsFragment : Fragment() {
         var success: Boolean = true
         var delete: Boolean = false
 
-        val user = firebaseAuth.currentUser
-        user?.let {
-            binding.editTextMyProfileUsername.hint = user.displayName
-            binding.editTextMyProfileEmailAddress.hint = user.email
-        }
+        //itt anno firebase-szel hint-nek beállítottam a jelenlegi username és email párost
+        //ehhez le kell kérni ezeket itt
+        val displayName = "displayName"
+        val email = "email"
+        binding.editTextMyProfileUsername.hint = displayName
+        binding.editTextMyProfileEmailAddress.hint = email
 
         binding.buttonDeleteUser.setOnClickListener {
             delete = true
-            val user = Firebase.auth.currentUser!!
 
-            firebaseAuth.signOut()
+            //ki kell jelentkeztetni a felhasznalot
 
-            user.delete()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d(TAG, "User account deleted.")
-                        Toast.makeText(view.context, "User account deleted.", Toast.LENGTH_LONG).show()
-                    }
-                }
-
+            //ha sikeres
+            Toast.makeText(view.context, "User account deleted.", Toast.LENGTH_LONG).show()
             val intent = Intent(view.context, SignInActivity::class.java)
             startActivity(intent)
         }
 
         binding.buttonSaveChanges.setOnClickListener{
             if(binding.editTextMyProfileUsername.text.isNotEmpty()){
-                val profileUpdates = userProfileChangeRequest {
-                    displayName = binding.editTextMyProfileUsername.text.toString()
-                }
+                //itt majd el kell küldeni az új displayName-et a DB-nek
+                //ezt az alábbi módon lehet kiszedni az edittext-ből
+                //displayName = binding.editTextMyProfileUsername.text.toString()
 
-                user!!.updateProfile(profileUpdates)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Log.d(TAG, "User profile updated.")
-                        }
-                        else
-                        {
-                            success = false
-                            Toast.makeText(view.context, task.exception.toString(), Toast.LENGTH_LONG).show()
-                        }
-                    }
             }
             if(binding.editTextMyProfileEmailAddress.text.isNotEmpty()){
-                user!!.updateEmail(binding.editTextMyProfileEmailAddress.text.toString())
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Log.d(TAG, "User email address updated.")
-                        }
-                        else
-                        {
-                            success = false
-                            Toast.makeText(view.context, task.exception.toString(), Toast.LENGTH_LONG).show()
-                        }
-                    }
+                //itt majd el kell küldeni az új emailt-t a DB-nek
+                //ezt az alábbi módon lehet kiszedni az edittext-ből
+                //displayName = binding.editTextMyProfileEmailAddress.text.toString()
             }
             if(binding.editTextMyProfilePassword1.text.isNotEmpty()){
                 if(binding.editTextMyProfilePassword2.text.isNotEmpty()){
                     if(binding.editTextMyProfilePassword1.text.toString() == binding.editTextMyProfilePassword2.text.toString()){
                         val newPassword = binding.editTextMyProfilePassword1.text.toString()
-                        user!!.updatePassword(newPassword)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    Log.d(TAG, "User password updated.")
-                                }
-                                else
-                                {
-                                    success = false
-                                    Toast.makeText(view.context, task.exception.toString(), Toast.LENGTH_LONG).show()
-                                }
-                            }
+                        //itt majd hash-elni kell az új pw-t és akkor post-olni a db-nek
+
                     }
                     else{
                         success = false
