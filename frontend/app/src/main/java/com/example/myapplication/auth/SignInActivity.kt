@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Credentials
 import android.net.wifi.hotspot2.pps.Credential
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Im
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -37,7 +38,6 @@ class SignInActivity : AppCompatActivity() {
     //private lateinit var firebaseAuth: FirebaseAuth
 
     var token = ""
-    var responseCode = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,81 +57,70 @@ class SignInActivity : AppCompatActivity() {
             //TODO passwd should be hashed, SQLI
             val pass = binding.editTextSignInPassword.text.toString()
 
+            sendData(email, pass).start()
+        }
+
+    }
+
+    private fun sendData(email: String, pass: String): Thread {
+            return Thread {
+                val jsonObject = JSONObject()
+
+                val basic_user_pass = io.grpc.okhttp.internal.Credentials.basic(email, pass)
+
+                // Convert JSONObject to String
+                val jsonObjectString = jsonObject.toString()
 
 
-            if (email.isNotEmpty() && pass.isNotEmpty()) {
+                val url = URL("http://192.168.1.93/users/login")
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "POST"
+                connection.setRequestProperty(
+                    "Content-Type",
+                    "application/json"
+                ) // The format of the content we're sending to the server
+                connection.setRequestProperty(
+                    "Accept",
+                    "application/json"
+                ) // The format of response we want to get from the server
+                connection.doInput = true
+                connection.doOutput = true
+                connection.setRequestProperty("Authorization", basic_user_pass)
 
-                sendData(email, pass)
-                Log.d("RESPONSE CODE IN IF", responseCode.toString())
-                if(responseCode == 200){
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
+                val outputStreamWriter = OutputStreamWriter(connection.outputStream)
+                outputStreamWriter.write(jsonObjectString)
+                outputStreamWriter.flush()
+
+                if (connection.responseCode == 200) {
+                    val inputSystem = connection.inputStream
+                    val inputStreamReader = InputStreamReader(inputSystem, "UTF-8")
+                    val response = Gson().fromJson(inputStreamReader, Token::class.java)
+                    Log.d("A token", response.token)
+                    token = response.token
+                    updateUI(email, pass, connection.responseCode)
+                    inputStreamReader.close()
+                    inputSystem.close()
                 }else {
-                    Toast.makeText(this, "Authentication failed", Toast.LENGTH_SHORT).show()
+                    updateUI(email, pass, connection.responseCode)
                 }
-            } else {
-                Toast.makeText(this, "Make sure to fill every field", Toast.LENGTH_SHORT).show()
             }
-        }
-
     }
 
-    private fun sendData(email: String, pass: String) {
-
-            val jsonObject = JSONObject()
-            jsonObject.put("email", "b@c.com")
-            jsonObject.put( "password", "password")
-            jsonObject.put("admin", true)
-            jsonObject.put("name", "name1")
-
-            val basic_user_pass = io.grpc.okhttp.internal.Credentials.basic(email, pass)
-
-            // Convert JSONObject to String
-            val jsonObjectString = jsonObject.toString()
-
-
-        GlobalScope.launch(Dispatchers.IO) {
-            val url = URL("http://192.168.1.93/users/login")
-            val connection = url.openConnection() as HttpURLConnection
-            connection.requestMethod = "POST"
-            connection.setRequestProperty(
-                "Content-Type",
-                "application/json"
-            ) // The format of the content we're sending to the server
-            connection.setRequestProperty(
-                "Accept",
-                "application/json"
-            ) // The format of response we want to get from the server
-            connection.doInput = true
-            connection.doOutput = true
-            connection.setRequestProperty("Authorization", basic_user_pass)
-
-            val outputStreamWriter = OutputStreamWriter(connection.outputStream)
-            outputStreamWriter.write(jsonObjectString)
-            outputStreamWriter.flush()
-            Log.d("RESPONSE CODE IN THREAD", responseCode.toString())
-            if(connection.responseCode == 200){
-                Log.d("RESPONSE CODE IN THREAD", responseCode.toString())
-                val inputSystem = connection.inputStream
-                val inputStreamReader = InputStreamReader(inputSystem, "UTF-8")
-                val response = Gson().fromJson(inputStreamReader, Token::class.java)
-                Log.d("A token", response.token)
-                token = response.token
-                responseCode = connection.responseCode
-                inputStreamReader.close()
-                inputSystem.close()
+    private fun updateUI(email: String, pass: String, responseCode: Int) {
+        runOnUiThread {
+            kotlin.run {
+                if (email.isNotEmpty() && pass.isNotEmpty()) {
+                    Log.d("RESPONSE CODE IN IF", responseCode.toString())
+                    if(responseCode == 200){
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                    }else {
+                        Toast.makeText(this, "Authentication failed", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, "Make sure to fill every field", Toast.LENGTH_SHORT).show()
+                }
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        /*
-        if(firebaseAuth.currentUser != null){
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        }
-        */
     }
 }
