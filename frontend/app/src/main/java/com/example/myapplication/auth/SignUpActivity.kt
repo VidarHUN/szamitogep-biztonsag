@@ -10,13 +10,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import com.example.myapplication.MainActivity
 import com.example.myapplication.databinding.ActivitySignInBinding
 import com.example.myapplication.databinding.ActivitySignUpBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
@@ -26,7 +20,6 @@ import java.net.URL
 class SignUpActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignUpBinding
-    //private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +30,6 @@ class SignUpActivity : AppCompatActivity() {
             val intent = Intent(this, SignInActivity::class.java)
             startActivity(intent)
         }
-
-        //firebaseAuth = FirebaseAuth.getInstance()
 
         binding.buttonSignUp.setOnClickListener {
             val username = binding.editTextTextPersonName.text.toString()

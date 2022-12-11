@@ -10,21 +10,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.MainActivity
 import com.example.myapplication.databinding.ActivitySignInBinding
-import com.google.cloud.audit.AuthorizationInfo
-import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
-import okhttp3.internal.wait
 import org.json.JSONObject
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
@@ -35,9 +28,10 @@ import java.net.URL
 class SignInActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignInBinding
-    //private lateinit var firebaseAuth: FirebaseAuth
 
-    var token = ""
+    companion object{
+        var token = ""
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -120,7 +114,6 @@ class SignInActivity : AppCompatActivity() {
                 }else {
                     Toast.makeText(this, "Authentication failed", Toast.LENGTH_SHORT).show()
                 }
-
             }
         }
     }
