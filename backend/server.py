@@ -109,12 +109,12 @@ def get_users(current_user):
 def modify_user(current_user):
     # Get name from message body
     name = request.json['name']
-    password =  request.json['password']
+    hashed_password = generate_password_hash(request.json['password'], method='sha256')
     email = request.json['email']
     # Update Users table
     user = Users.query.filter_by(name=current_user.name).first()
     user.name = name
-    user.password = password
+    user.password = hashed_password
     user.email = email
     db.session.commit()
     return jsonify({'message': 'Modification was successful'})

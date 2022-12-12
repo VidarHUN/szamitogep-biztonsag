@@ -67,18 +67,19 @@ class ProfileSettingsFragment : Fragment() {
             if(binding.editTextMyProfileUsername.text.isNotEmpty() &&
                 binding.editTextMyProfileEmailAddress.text.isNotEmpty() &&
                 binding.editTextMyProfilePassword1.text.isNotEmpty()){
+
                 //itt majd el kell küldeni az új displayName-et a DB-nek
                 //ezt az alábbi módon lehet kiszedni az edittext-ből
                 //displayName = binding.editTextMyProfileUsername.text.toString()
                 sendData(binding.editTextMyProfileEmailAddress.text.toString(),
-                    binding.editTextMyProfileUsername.text.toString(),
-                    binding.editTextMyProfilePassword1.text.toString()).start()
-                Log.d("Log", "HALLO")
+                    binding.editTextMyProfilePassword1.text.toString(),
+                    binding.editTextMyProfileUsername.text.toString()).start()
 
                 if(binding.editTextMyProfilePassword1.text.isNotEmpty()){
                     if(binding.editTextMyProfilePassword2.text.isNotEmpty()){
                         if(binding.editTextMyProfilePassword1.text.toString() == binding.editTextMyProfilePassword2.text.toString()){
                             val newPassword = binding.editTextMyProfilePassword1.text.toString()
+
                             //itt majd hash-elni kell az új pw-t és akkor post-olni a db-nek
                             sendData(binding.editTextMyProfileEmailAddress.text.toString(),
                                 binding.editTextMyProfileUsername.text.toString(),
@@ -91,6 +92,7 @@ class ProfileSettingsFragment : Fragment() {
                     }
                 }
             }else {
+                success = false
                 Toast.makeText(view.context, "Fill the username, email and password fields", Toast.LENGTH_SHORT).show()
             }
 
