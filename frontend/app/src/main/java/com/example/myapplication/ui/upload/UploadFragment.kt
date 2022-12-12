@@ -33,8 +33,8 @@ class UploadFragment : Fragment() {
     private lateinit var imageView: ImageView
 
     companion object{
-        val IMAGE_REQUEST_CODE = 100
-    }
+    const val IMAGE_REQUEST_CODE = 100
+    const val SELECT_FILE_REQUEST_CODE = 200
 
 
     override fun onCreateView(
@@ -53,20 +53,24 @@ class UploadFragment : Fragment() {
 
         binding.constraintUploadImage.setOnClickListener {
             binding.constraintUploadImage.visibility = View.INVISIBLE;
-            pickImageGallery()
+            pickFileFromDevice()
         }
     }
 
-    private fun pickImageGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, IMAGE_REQUEST_CODE)
+    private fun pickFileFromDevice(){
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "*/*" // Allow the user to select any file type
+        startActivityForResult(intent, SELECT_FILE_REQUEST_CODE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == IMAGE_REQUEST_CODE && resultCode == RESULT_OK){
-            imageView.setImageURI(data?.data)
+
+        if (requestCode == SELECT_FILE_REQUEST_CODE && resultCode == RESULT_OK) {
+            // Get the Uri of the selected file
+            val selectedFileUri: Uri? = data?.data
+
+            // Upload the file to your backend using the Uri
         }
     }
 

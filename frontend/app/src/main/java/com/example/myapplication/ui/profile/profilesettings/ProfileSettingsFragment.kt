@@ -31,6 +31,7 @@ import java.net.URL
 class ProfileSettingsFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+
     private lateinit var root: View
     companion object {
         var userId = "";
@@ -51,7 +52,6 @@ class ProfileSettingsFragment : Fragment() {
         var success: Boolean = true
         var delete: Boolean = false
 
-
         getData().start()
 
         binding.buttonDeleteUser.setOnClickListener {
@@ -61,6 +61,25 @@ class ProfileSettingsFragment : Fragment() {
             deleteUser().start()
             //ha sikeres
             Toast.makeText(view.context, "User account deleted.", Toast.LENGTH_LONG).show()
+            val intent = Intent(view.context, SignInActivity::class.java)
+            startActivity(intent)
+
+        }
+
+        binding.buttonDeleteUser.setOnClickListener {
+            delete = true
+            val user = Firebase.auth.currentUser!!
+
+            firebaseAuth.signOut()
+
+            user.delete()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d(TAG, "User account deleted.")
+                        Toast.makeText(view.context, "User account deleted.", Toast.LENGTH_LONG).show()
+                    }
+                }
+
             val intent = Intent(view.context, SignInActivity::class.java)
             startActivity(intent)
         }
