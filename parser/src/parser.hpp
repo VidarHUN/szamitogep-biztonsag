@@ -46,6 +46,8 @@ private:
         Animation
     };
 
+    int num_anim_parsed;
+
     char *buf1, *buf4, *buf8;
     char _caffmagic[4] = {0x43, 0x41, 0x46, 0x46};
     char _ciffmagic[4] = {0x43, 0x49, 0x46, 0x46};
@@ -83,32 +85,25 @@ private:
             throw ParserException("Length in CAFF block is zero.");
         char *bytes = new char[len];
         file->read(bytes, len);
+        if (file->eofbit || file->failbit)
+            throw ParserException("Cannot read more bytes from file.");
         return bytes;
     }
 
     inline uint8_t read_block_type(std::ifstream *file)
     {
-        try
-        {
-            file->read(buf1, 1);
-        }
-        catch (std::exception)
-        {
+
+        file->read(buf1, 1);
+        if (file->eofbit || file->failbit)
             throw ParserException("Cannot read more bytes from file.");
-        }
         return (uint8_t)(*buf1);
     }
 
     inline uint64_t read_block_len(std::ifstream *file)
     {
-        try
-        {
-            file->read(buf8, 8);
-        }
-        catch (std::exception)
-        {
+        file->read(buf8, 8);
+        if (file->eofbit || file->failbit)
             throw ParserException("Cannot read more bytes from file.");
-        }
         return convert_8_bytes(buf8);
     }
 
@@ -125,6 +120,7 @@ private:
 public:
     CAFFParser()
     {
+        num_anim_parsed = 0;
         buf1 = new char[1];
         buf4 = new char[4];
         buf8 = new char[8];
