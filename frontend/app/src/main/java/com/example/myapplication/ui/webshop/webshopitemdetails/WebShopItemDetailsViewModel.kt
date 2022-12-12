@@ -39,7 +39,4 @@ class WebShopItemDetailsViewModel : ViewModel() {
         val commentItemAdapter = CommentItemAdapter(commentList)
         recyclerView.adapter = commentItemAdapter
     }
-
-
-
 }

@@ -10,13 +10,10 @@ import androidx.navigation.fragment.findNavController
 import com.example.myapplication.R
 import com.example.myapplication.auth.SignInActivity
 import com.example.myapplication.databinding.FragmentHomeBinding
-import com.google.firebase.auth.FirebaseAuth
 
 class HomeFragment : Fragment() {
-
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,21 +21,15 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-
-        firebaseAuth = FirebaseAuth.getInstance()
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val user = firebaseAuth.currentUser
-        user?.let {
-            val name = user.displayName
-            val textToDisplay = "Hello $name!"
-            binding.textViewHello.text = textToDisplay
-        }
+        //itt lehetne displayelni a user nevét mitn anno firebase-szel de am ha bonyi és
+        //több idő mint 3 másodperc akkor mindegy
+        binding.textViewHello.text = "Hello!"
 
         binding.constraintUpload.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_home_to_navigation_upload)
@@ -53,13 +44,12 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_navigation_home_to_navigation_profile)
         }
         binding.constraintLogout.setOnClickListener {
-            firebaseAuth.signOut()
+            //TODO kijelentkezés
 
             val intent = Intent(view.context, SignInActivity::class.java)
             startActivity(intent)
         }
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

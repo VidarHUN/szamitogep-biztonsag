@@ -29,15 +29,12 @@ class UploadFragment : Fragment() {
 
     private var _binding: FragmentUploadBinding? = null
     private val binding get() = _binding!!
-    private lateinit var firebaseAuth: FirebaseAuth
     var pickedImage: Uri? = null
     private lateinit var imageView: ImageView
 
     companion object{
-        const val IMAGE_REQUEST_CODE = 100
-        const val SELECT_FILE_REQUEST_CODE = 200
-    }
-
+    const val IMAGE_REQUEST_CODE = 100
+    const val SELECT_FILE_REQUEST_CODE = 200
 
 
     override fun onCreateView(
@@ -46,8 +43,6 @@ class UploadFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentUploadBinding.inflate(inflater, container, false)
-
-        firebaseAuth = FirebaseAuth.getInstance()
         imageView = binding.imageViewUploadImage
 
         return binding.root

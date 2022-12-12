@@ -59,10 +59,17 @@ sqlite3 users.db
 # Ctrl+d to exit
 ```
 
-Change this lin to your db's path:
+Set ENVAR for database token and database path, for example:
 
-```python
-app.config['SQLALCHEMY_DATABASE_URI']='sqlite://///home/richard/Desktop/BMEM2/szamitogep-biztonsag/backend/users.db'
+On windows
+```console
+$env:SECRET = '004f2af45d3a4e161a7dd2d17fdae47f'
+$env:DBPATH = 'sqlite:///D:\\Norbi\\sqlite\\users.db'
+```
+On linux
+```console
+export SECRET='004f2af45d3a4e161a7dd2d17fdae47f'
+export DBPATH='sqlite:////home/Norbi/sqlite/users.db'
 ```
 
 > TODO: Use environment variables to this purpose

@@ -10,9 +10,8 @@ import datetime
 import jwt
 
 app = Flask(__name__)
-
-app.config['SECRET_KEY']='004f2af45d3a4e161a7dd2d17fdae47f'
-app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///D:\\Norbi\\sqlite\\users.db'
+app.config['SECRET_KEY'] = os.getenv('SECRET')
+app.config['SQLALCHEMY_DATABASE_URI']= os.getenv('DBPATH')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app)
@@ -72,6 +71,7 @@ def signup_user():
     db.session.commit()
     return jsonify({'message': 'registered successfully'})
 
+#Server error when email is bad
 @app.route('/users/login', methods=['POST'])
 def login_user():
     auth = request.authorization
@@ -103,36 +103,40 @@ def get_users(current_user):
         'email': user_data.email
     })
 
-@app.route('/users/name', methods=['PUT'])
+
+@app.route('/users/list', methods=['GET'])
 @token_required
-def modify_user_name(current_user):
+def get_users_list(current_user):
+    if not current_user.admin:
+        return make_response('Forbidden',  403,
+                        {'Authentication': '"admin privilege required"'})
+
+    user_data = Users.query.all()
+    result = []   
+    for user in user_data:   
+       user_data = {}   
+       user_data['public_id'] = user.public_id  
+       user_data['name'] = user.name 
+       user_data['password'] = user.password
+       user_data['admin'] = user.admin
+       user_data['email'] = user.email 
+       result.append(user_data) 
+
+    return jsonify({
+        'users': result
+    })
+
+@app.route('/users/modify', methods=['PUT'])
+@token_required
+def modify_user(current_user):
     # Get name from message body
     name = request.json['name']
-    # Update Users table
-    user = Users.query.filter_by(name=current_user.name).first()
-    user.name = name
-    db.session.commit()
-    return jsonify({'message': 'Modification was successful'})
-
-@app.route('/users/password', methods=['PUT'])
-@token_required
-def modify_user_password(current_user):
-    # Get password from message body
     hashed_password = generate_password_hash(request.json['password'], method='sha256')
-    # Update Users table
-    user = Users.query.filter_by(name=current_user.name).first()
-
-    user.password = hashed_password
-    db.session.commit()
-    return jsonify({'message': 'Modification was successful'})
-
-@app.route('/users/email', methods=['PUT'])
-@token_required
-def modify_user_email(current_user):
-    # Get email from message body
     email = request.json['email']
     # Update Users table
     user = Users.query.filter_by(name=current_user.name).first()
+    user.name = name
+    user.password = hashed_password
     user.email = email
     db.session.commit()
     return jsonify({'message': 'Modification was successful'})
@@ -257,7 +261,7 @@ def postRequest():
 
 @app.route("/request/list", methods=['GET'])
 @token_required
-def getRequest():
+def getRequest(self):
     files = os.listdir("gifs")
     gifs = [file for file in files if file.endswith('.gif')]
     return jsonify({
