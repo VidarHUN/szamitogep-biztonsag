@@ -14,8 +14,7 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
     uint8_t blk_type;
     uint64_t blk_len;
 
-    // First block --> CAFF HEADER
-
+    // First block --> must be a CAFF HEADER
     try
     {
         blk_type = next_block_info(file, blk_len);
@@ -92,6 +91,7 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
             }
             bytes = next_block(file, blk_len);
             animation[i] = parse_animation(bytes, blk_len, i);
+            num_anim_parsed++;
         }
     }
     catch (ParserException &e)
@@ -106,10 +106,11 @@ ParsedInfo CAFFParser::parse_file(std::ifstream *file)
         throw ParserException("Invalid memory allocation.");
     }
 
+    delete[] bytes;
+    if (num_anim_parsed < header.num_anim)
+        throw ParserException("Could not read the specified amount of animation block. Abort.");
     if (file->peek() != EOF)
         throw ParserException("File unnecessarily longer than needed. You are a bad man.");
-
-    delete[] bytes;
 
     ParsedInfo pi;
     pi.caff_header = header;
