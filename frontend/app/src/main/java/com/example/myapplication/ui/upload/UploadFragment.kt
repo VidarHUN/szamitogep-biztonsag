@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.upload
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -21,15 +22,22 @@ import com.example.myapplication.MainActivity
 import com.example.myapplication.R
 import com.example.myapplication.auth.SignInActivity
 import com.example.myapplication.databinding.FragmentProfileMenuBinding
+import com.example.myapplication.databinding.FragmentUploadBinding
 import com.google.firebase.auth.FirebaseAuth
 
 class UploadFragment : Fragment() {
 
-    private var _binding: FragmentProfileMenuBinding? = null
+    private var _binding: FragmentUploadBinding? = null
     private val binding get() = _binding!!
     private lateinit var firebaseAuth: FirebaseAuth
-    var pickedPhoto: Uri? = null
-    var pickedBitmap: Bitmap? = null
+    var pickedImage: Uri? = null
+    private lateinit var imageView: ImageView
+
+    companion object{
+        const val IMAGE_REQUEST_CODE = 100
+        const val SELECT_FILE_REQUEST_CODE = 200
+    }
+
 
 
     override fun onCreateView(
@@ -37,9 +45,10 @@ class UploadFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProfileMenuBinding.inflate(inflater, container, false)
+        _binding = FragmentUploadBinding.inflate(inflater, container, false)
 
         firebaseAuth = FirebaseAuth.getInstance()
+        imageView = binding.imageViewUploadImage
 
         return binding.root
     }
@@ -47,39 +56,32 @@ class UploadFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonSignOut.setOnClickListener {
+        binding.constraintUploadImage.setOnClickListener {
+            binding.constraintUploadImage.visibility = View.INVISIBLE;
+            pickFileFromDevice()
+        }
+    }
 
+    private fun pickFileFromDevice(){
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "*/*" // Allow the user to select any file type
+        startActivityForResult(intent, SELECT_FILE_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == SELECT_FILE_REQUEST_CODE && resultCode == RESULT_OK) {
+            // Get the Uri of the selected file
+            val selectedFileUri: Uri? = data?.data
+
+            // Upload the file to your backend using the Uri
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    fun pickPhoto(view: View){
-        if(ContextCompat.checkSelfPermission(view.context, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-        != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this.activity as MainActivity, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), 1)
-        }
-        else{
-            val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(galleryIntent, 2)
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if(requestCode == 1){
-            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                startActivityForResult(galleryIntent, 2)
-            }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
 }

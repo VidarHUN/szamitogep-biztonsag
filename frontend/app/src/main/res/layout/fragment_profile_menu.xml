@@ -61,6 +61,22 @@
         tools:layout_editor_absoluteX="150dp" />
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonAdminPage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/my_button_purple"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="150dp"
+        android:padding="10dp"
+        android:text="Admin page"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/buttonCheckProfile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonEditProfile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -88,5 +104,7 @@
         android:text="Sign out"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -40,10 +40,9 @@ class HomeFragment : Fragment() {
             binding.textViewHello.text = textToDisplay
         }
 
-        binding.constraintWebshop.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_home_to_navigation_webshop)
+        binding.constraintUpload.setOnClickListener {
+            findNavController().navigate(R.id.action_navigation_home_to_navigation_upload)
         }
-
         binding.constraintWebshop.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_home_to_navigation_webshop)
         }

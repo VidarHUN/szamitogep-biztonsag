@@ -76,8 +76,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
         <TextView
             android:id="@+id/textViewWebShopItemDetail"
             android:layout_width="wrap_content"

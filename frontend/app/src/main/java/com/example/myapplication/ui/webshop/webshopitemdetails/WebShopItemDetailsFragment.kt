@@ -33,8 +33,6 @@ class WebShopItemDetailsFragment(var title: String, var imageID: Int, var image:
         _binding = FragmentWebshopItemDetailsBinding.inflate(inflater, container, false)
         root = binding.root
 
-
-
         return root
     }
 

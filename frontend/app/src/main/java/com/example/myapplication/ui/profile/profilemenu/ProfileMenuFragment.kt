@@ -35,6 +35,10 @@ class ProfileMenuFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.buttonAdminPage.setOnClickListener{
+            findNavController().navigate(R.id.action_navigation_profile_menu_to_navigation_profile_admin_page)
+        }
+
         binding.buttonCheckProfile.setOnClickListener{
             findNavController().navigate(R.id.action_navigation_profile_menu_to_navigation_profile_check)
         }
