@@ -10,9 +10,8 @@ import datetime
 import jwt
 
 app = Flask(__name__)
-
-app.config['SECRET_KEY']='004f2af45d3a4e161a7dd2d17fdae47f'
-app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///D:\\Norbi\\sqlite\\users.db'
+app.config['SECRET_KEY'] = os.getenv('SECRET')
+app.config['SQLALCHEMY_DATABASE_URI']= os.getenv('DBPATH')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app)
@@ -102,6 +101,29 @@ def get_users(current_user):
         'password': user_data.password,
         'admin': user_data.admin,
         'email': user_data.email
+    })
+
+
+@app.route('/users/list', methods=['GET'])
+@token_required
+def get_users_list(current_user):
+    if not current_user.admin:
+        return make_response('Forbidden',  403,
+                        {'Authentication': '"admin privilege required"'})
+
+    user_data = Users.query.all()
+    result = []   
+    for user in user_data:   
+       user_data = {}   
+       user_data['public_id'] = user.public_id  
+       user_data['name'] = user.name 
+       user_data['password'] = user.password
+       user_data['admin'] = user.admin
+       user_data['email'] = user.email 
+       result.append(user_data) 
+
+    return jsonify({
+        'users': result
     })
 
 @app.route('/users/modify', methods=['PUT'])

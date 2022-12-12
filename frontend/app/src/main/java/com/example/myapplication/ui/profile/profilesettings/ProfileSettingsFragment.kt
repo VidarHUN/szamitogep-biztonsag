@@ -32,7 +32,9 @@ class ProfileSettingsFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private lateinit var root: View
-    var userId = "";
+    companion object {
+        var userId = "";
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,6 +76,7 @@ class ProfileSettingsFragment : Fragment() {
                 sendData(binding.editTextMyProfileEmailAddress.text.toString(),
                     binding.editTextMyProfilePassword1.text.toString(),
                     binding.editTextMyProfileUsername.text.toString()).start()
+                //TODO válasz
 
                 if(binding.editTextMyProfilePassword1.text.isNotEmpty()){
                     if(binding.editTextMyProfilePassword2.text.isNotEmpty()){
@@ -84,6 +87,7 @@ class ProfileSettingsFragment : Fragment() {
                             sendData(binding.editTextMyProfileEmailAddress.text.toString(),
                                 binding.editTextMyProfileUsername.text.toString(),
                                 binding.editTextMyProfilePassword1.text.toString())
+                            //TODO válasz
                         }
                         else{
                             success = false
