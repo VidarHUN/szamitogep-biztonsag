@@ -84,26 +84,40 @@ private:
         if (len == 0)
             throw ParserException("Length in CAFF block is zero.");
         char *bytes = new char[len];
-        file->read(bytes, len);
-        if (file->eofbit || file->failbit)
+        try
+        {
+            file->read(bytes, len);
+        }
+        catch (std::exception)
+        {
             throw ParserException("Cannot read more bytes from file.");
+        }
         return bytes;
     }
 
     inline uint8_t read_block_type(std::ifstream *file)
     {
-
-        file->read(buf1, 1);
-        if (file->eofbit || file->failbit)
+        try
+        {
+            file->read(buf1, 1);
+        }
+        catch (std::exception)
+        {
             throw ParserException("Cannot read more bytes from file.");
+        }
         return (uint8_t)(*buf1);
     }
 
     inline uint64_t read_block_len(std::ifstream *file)
     {
-        file->read(buf8, 8);
-        if (file->eofbit || file->failbit)
+        try
+        {
+            file->read(buf8, 8);
+        }
+        catch (std::exception)
+        {
             throw ParserException("Cannot read more bytes from file.");
+        }
         return convert_8_bytes(buf8);
     }
 

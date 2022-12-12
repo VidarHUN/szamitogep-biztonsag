@@ -88,6 +88,7 @@ int main(int argc, char **argv)
     string outGIF;
     string caffname;
     ifstream caff;
+    caff.exceptions(ifstream::failbit | ifstream::badbit);
     int opt = 0;
 
     struct option longopts[] = {
