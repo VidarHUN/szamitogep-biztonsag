@@ -1,27 +1,16 @@
 package com.example.myapplication.auth
 
 import android.content.Intent
-import android.net.Credentials
-import android.net.wifi.hotspot2.pps.Credential
 import android.os.Bundle
-import android.provider.ContactsContract.CommonDataKinds.Im
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.MainActivity
 import com.example.myapplication.databinding.ActivitySignInBinding
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
 import org.json.JSONObject
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
-import java.net.Authenticator
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -66,7 +55,6 @@ class SignInActivity : AppCompatActivity() {
 
                 val basic_user_pass = io.grpc.okhttp.internal.Credentials.basic(email, pass)
 
-                // Convert JSONObject to String
                 val jsonObjectString = jsonObject.toString()
 
 

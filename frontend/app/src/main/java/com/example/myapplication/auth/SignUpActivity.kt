@@ -1,14 +1,11 @@
 package com.example.myapplication.auth
 
-import android.content.ContentValues.TAG
+
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.ui.AppBarConfiguration
-import com.example.myapplication.MainActivity
-import com.example.myapplication.databinding.ActivitySignInBinding
 import com.example.myapplication.databinding.ActivitySignUpBinding
 import com.google.gson.Gson
 import org.json.JSONObject
@@ -59,11 +56,7 @@ class SignUpActivity : AppCompatActivity() {
             jsonObject.put("email", email)
             jsonObject.put("admin", false)
 
-            val basic_user_pass = io.grpc.okhttp.internal.Credentials.basic(email, pass)
-
-            // Convert JSONObject to String
             val jsonObjectString = jsonObject.toString()
-
 
             val url = URL("http://192.168.1.93/users/register")
             val connection = url.openConnection() as HttpURLConnection
@@ -89,25 +82,24 @@ class SignUpActivity : AppCompatActivity() {
                 val inputStreamReader = InputStreamReader(inputSystem, "UTF-8")
                 val response = Gson().fromJson(inputStreamReader, RegisterResponse::class.java)
                 Log.d("A message", response.message)
-                updateUI(connection.responseCode)
+                updateUI(connection.responseCode, response.message)
                 inputStreamReader.close()
                 inputSystem.close()
             } else {
-                Log.e("ERROR", "Network error")
-                updateUI(connection.responseCode)
+                updateUI(connection.responseCode,"Network error")
             }
         }
     }
 
-    private fun updateUI(responseCode: Int) {
+    private fun updateUI(responseCode: Int, responseMsg: String) {
         runOnUiThread {
             kotlin.run {
-                //ide jon majd a user creation, ha sikeres, akkor ez a kovi ket sor, ha nem, akkor hiba
                 if (responseCode == 200) {
+                    Toast.makeText(this, responseMsg, Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, SignInActivity::class.java)
                     startActivity(intent)
                 } else {
-                    Toast.makeText(this, "Server Error", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, responseMsg, Toast.LENGTH_SHORT).show()
                 }
             }
         }

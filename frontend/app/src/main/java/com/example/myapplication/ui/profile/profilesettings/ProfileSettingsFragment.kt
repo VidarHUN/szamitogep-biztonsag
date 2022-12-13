@@ -1,6 +1,5 @@
 package com.example.myapplication.ui.profile.profilesettings
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -10,17 +9,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.myapplication.MainActivity
 import com.example.myapplication.R
 import com.example.myapplication.auth.SignInActivity
-import com.example.myapplication.auth.Token
 import com.example.myapplication.databinding.FragmentProfileBinding
 import com.example.myapplication.ui.profile.profilecheck.UserProfile
-import com.example.myapplication.ui.webshop.webshoplistitems.Response
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import org.json.JSONObject
 import java.io.InputStreamReader
@@ -58,8 +50,10 @@ class ProfileSettingsFragment : Fragment() {
             delete = true
 
             //ki kell jelentkeztetni a felhasznalot
-            deleteUser().start()
             //ha sikeres
+
+            deleteUser().start()
+
             Toast.makeText(view.context, "User account deleted.", Toast.LENGTH_LONG).show()
             val intent = Intent(view.context, SignInActivity::class.java)
             startActivity(intent)
@@ -68,17 +62,6 @@ class ProfileSettingsFragment : Fragment() {
 
         binding.buttonDeleteUser.setOnClickListener {
             delete = true
-            val user = Firebase.auth.currentUser!!
-
-            firebaseAuth.signOut()
-
-            user.delete()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d(TAG, "User account deleted.")
-                        Toast.makeText(view.context, "User account deleted.", Toast.LENGTH_LONG).show()
-                    }
-                }
 
             val intent = Intent(view.context, SignInActivity::class.java)
             startActivity(intent)
@@ -89,24 +72,18 @@ class ProfileSettingsFragment : Fragment() {
                 binding.editTextMyProfileEmailAddress.text.isNotEmpty() &&
                 binding.editTextMyProfilePassword1.text.isNotEmpty()){
 
-                //itt majd el kell küldeni az új displayName-et a DB-nek
-                //ezt az alábbi módon lehet kiszedni az edittext-ből
-                //displayName = binding.editTextMyProfileUsername.text.toString()
                 sendData(binding.editTextMyProfileEmailAddress.text.toString(),
                     binding.editTextMyProfilePassword1.text.toString(),
                     binding.editTextMyProfileUsername.text.toString()).start()
-                //TODO válasz
 
                 if(binding.editTextMyProfilePassword1.text.isNotEmpty()){
                     if(binding.editTextMyProfilePassword2.text.isNotEmpty()){
                         if(binding.editTextMyProfilePassword1.text.toString() == binding.editTextMyProfilePassword2.text.toString()){
                             val newPassword = binding.editTextMyProfilePassword1.text.toString()
 
-                            //itt majd hash-elni kell az új pw-t és akkor post-olni a db-nek
                             sendData(binding.editTextMyProfileEmailAddress.text.toString(),
                                 binding.editTextMyProfileUsername.text.toString(),
                                 binding.editTextMyProfilePassword1.text.toString())
-                            //TODO válasz
                         }
                         else{
                             success = false
@@ -140,7 +117,6 @@ class ProfileSettingsFragment : Fragment() {
             connection.setRequestProperty("x-access-tokens", SignInActivity.token)
 
             if (connection.responseCode == 200) {
-                Log.d("Connection", "200")
                 val inputSystem = connection.inputStream
                 val inputStreamReader = InputStreamReader(inputSystem, "UTF-8")
                 val response = Gson().fromJson(inputStreamReader, UserProfile::class.java)
@@ -151,10 +127,12 @@ class ProfileSettingsFragment : Fragment() {
                 inputStreamReader.close()
                 inputSystem.close()
             } else {
-                Log.d("ERROR", "Network error")
+                Toast.makeText(activity, "Network Error", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
+
 
     private fun deleteUser(): Thread {
         return Thread {
@@ -192,11 +170,7 @@ class ProfileSettingsFragment : Fragment() {
             jsonObject.put("password", pass)
             jsonObject.put("name", user)
 
-            val basic_user_pass = io.grpc.okhttp.internal.Credentials.basic(email, pass)
-
-            // Convert JSONObject to String
             val jsonObjectString = jsonObject.toString()
-
 
             val url = URL("http://192.168.1.93/users/modify")
             val connection = url.openConnection() as HttpURLConnection
@@ -222,11 +196,20 @@ class ProfileSettingsFragment : Fragment() {
                 val inputSystem = connection.inputStream
                 val inputStreamReader = InputStreamReader(inputSystem, "UTF-8")
                 val response = Gson().fromJson(inputStreamReader, UserCRUDEAnsw::class.java)
-                Log.d("A token", "SIKER")
+                updateUI(connection.responseCode, response.message)
                 inputStreamReader.close()
                 inputSystem.close()
-            }else {
-
+            }
+        }
+    }
+    private fun updateUI(responseCode: Int, responseMsg: String) {
+        activity?.runOnUiThread {
+            kotlin.run {
+                if (responseCode == 200) {
+                    Toast.makeText(activity, responseMsg, Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(activity, responseMsg, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

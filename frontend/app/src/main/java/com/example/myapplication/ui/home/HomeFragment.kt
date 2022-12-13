@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.myapplication.R
 import com.example.myapplication.auth.SignInActivity
+import com.example.myapplication.auth.SignInActivity.Companion.token
 import com.example.myapplication.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
@@ -27,8 +28,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //itt lehetne displayelni a user nevét mitn anno firebase-szel de am ha bonyi és
-        //több idő mint 3 másodperc akkor mindegy
         binding.textViewHello.text = "Hello!"
 
         binding.constraintUpload.setOnClickListener {
@@ -44,8 +43,7 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_navigation_home_to_navigation_profile)
         }
         binding.constraintLogout.setOnClickListener {
-            //TODO kijelentkezés
-
+            token = ""
             val intent = Intent(view.context, SignInActivity::class.java)
             startActivity(intent)
         }

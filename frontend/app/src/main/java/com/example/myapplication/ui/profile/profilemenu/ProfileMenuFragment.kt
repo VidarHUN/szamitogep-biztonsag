@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.myapplication.R
 import com.example.myapplication.auth.SignInActivity
+import com.example.myapplication.auth.SignInActivity.Companion.token
 import com.example.myapplication.databinding.FragmentProfileMenuBinding
-import com.google.firebase.auth.FirebaseAuth
 
 class ProfileMenuFragment : Fragment() {
     private var _binding: FragmentProfileMenuBinding? = null
@@ -41,14 +41,12 @@ class ProfileMenuFragment : Fragment() {
         }
 
         binding.buttonSignOut.setOnClickListener {
-            //kijelentkezés
 
+            token = ""
             val intent = Intent(view.context, SignInActivity::class.java)
             startActivity(intent)
         }
-
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

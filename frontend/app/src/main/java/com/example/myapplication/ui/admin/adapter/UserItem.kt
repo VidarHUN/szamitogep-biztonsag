@@ -1,9 +1,8 @@
 package com.example.myapplication.ui.admin.adapter
 
-import android.media.Image
-
 data class UserItem (
-    val id: Int,
+    val public_id: String,
     val username: String,
-    val email: String
+    val email: String,
+    var password: String,
 )

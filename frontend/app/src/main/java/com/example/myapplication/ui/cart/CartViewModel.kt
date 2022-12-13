@@ -2,7 +2,6 @@ package com.example.myapplication.ui.cart
 
 import android.view.View
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.ui.cart.cartadapter.CartRepo
 import com.example.myapplication.ui.webshop.webshoplistitems.adapter.WebShopItem

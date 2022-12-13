@@ -6,10 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.myapplication.databinding.FragmentAdminSettingProfileBinding
-import com.google.firebase.auth.FirebaseAuth
 
 
-class AdminProfileSettingsFragment(var userId: Int) : Fragment() {
+class AdminProfileSettingsFragment(var userId: String) : Fragment() {
 
     private var _binding: FragmentAdminSettingProfileBinding? = null
     private val binding get() = _binding!!

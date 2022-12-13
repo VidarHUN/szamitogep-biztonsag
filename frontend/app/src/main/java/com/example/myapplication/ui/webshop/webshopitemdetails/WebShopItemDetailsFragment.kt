@@ -1,6 +1,5 @@
 package com.example.myapplication.ui.webshop.webshopitemdetails
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -12,13 +11,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.databinding.FragmentWebshopItemDetailsBinding
 import com.example.myapplication.ui.webshop.webshopitemdetails.commentadapter.CommentItem
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_webshop_item_details.view.*
 import kotlinx.coroutines.tasks.await
 
-class WebShopItemDetailsFragment(var title: String, var imageID: Int, var image: Int, var commentsList: ArrayList<CommentItem>) : Fragment() {
+class WebShopItemDetailsFragment(var title: String, var image: String, var commentsList: ArrayList<CommentItem>) : Fragment() {
 
     private var _binding: FragmentWebshopItemDetailsBinding? = null
     private val binding get() = _binding!!
@@ -41,7 +39,7 @@ class WebShopItemDetailsFragment(var title: String, var imageID: Int, var image:
         webShopItemDetailsViewModel = ViewModelProvider(this)[WebShopItemDetailsViewModel::class.java]
         val value = TypedValue()
 
-        view.resources.getValue(image, value, true)
+       /* view.resources.getValue(image, value, true)
         if(value.string.takeLast(3) == "jpg" || value.string.takeLast(3) == "png"){
             root.imageViewWebShopItemDetail.setImageResource(image)
             root.gifImageViewDetails.setImageResource(0)
@@ -49,7 +47,7 @@ class WebShopItemDetailsFragment(var title: String, var imageID: Int, var image:
         else if(value.string.takeLast(3) == "gif"){
             root.imageViewWebShopItemDetail.setImageResource(0)
             root.gifImageViewDetails.setImageResource(image)
-        }
+        }*/
 
         root.textViewWebShopItemDetailTitle.text = title
         webShopItemDetailsViewModel.setCommentList(root)

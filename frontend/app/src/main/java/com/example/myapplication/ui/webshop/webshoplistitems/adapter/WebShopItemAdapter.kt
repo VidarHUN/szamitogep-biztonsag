@@ -14,19 +14,25 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
+import com.example.myapplication.auth.SignInActivity
 import com.example.myapplication.ui.webshop.webshopitemdetails.WebShopItemDetailsFragment
 import com.example.myapplication.ui.webshop.webshopitemdetails.commentadapter.CommentItem
+import com.example.myapplication.ui.webshop.webshoplistitems.CaffList
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.recycler_item_caff.view.*
 import java.io.InputStream
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.Executors
 
 
 class WebShopItemAdapter (
         var webShopItems: ArrayList<WebShopItem>,
-        var list: ArrayList<String>
+        var activity: FragmentActivity
     ) : RecyclerView.Adapter<WebShopItemAdapter.WebShopViewHolder>() {
     private var context: Context? = null
     private lateinit var view: View
@@ -46,27 +52,20 @@ class WebShopItemAdapter (
     }
 
     override fun onBindViewHolder(holder: WebShopViewHolder, position: Int) {
-        holder.itemView.textViewTitleRecyclerItem.text = webShopItems[position].title
-        val value = TypedValue()
-        view.resources.getValue(webShopItems[position].image, value, true)
-
         val imageView = holder.itemView.imageViewRecyclerItem
         val executor = Executors.newSingleThreadExecutor()
         val handler = Handler(Looper.getMainLooper())
         var image: Bitmap? = null
-        /*
+
         executor.execute {
 
-            // Image URL
-            val imageURL = "https://media.geeksforgeeks.org/wp-content/cdn-uploads/gfg_200x200-min.png"
-
+            var url: String = "http://192.168.1.93/request/"+webShopItems[position].image
             // Tries to get the image and post it in the ImageView
             // with the help of Handler
             try {
-                var `in` = java.net.URL(list[1]).openStream()
-                if(webShopItems[position].id == 0){
-                    `in` = java.net.URL(list[0]).openStream()
-                }
+
+                var `in` = java.net.URL(url).openStream()
+
                 image = BitmapFactory.decodeStream(`in`)
 
                 // Only for making changes in UI
@@ -81,9 +80,12 @@ class WebShopItemAdapter (
                 e.printStackTrace()
             }
         }
-        */
 
-        if(value.string.takeLast(3) == "jpg" || value.string.takeLast(3) == "png"){
+        activity.runOnUiThread( Runnable (){
+            holder.itemView.gifImageView.setImageBitmap(image)
+        })
+
+     /*   if(value.string.takeLast(3) == "jpg" || value.string.takeLast(3) == "png"){
             holder.itemView.imageViewRecyclerItem.setImageResource(webShopItems[position].image)
             holder.itemView.gifImageView.setImageResource(0)
         }
@@ -91,7 +93,7 @@ class WebShopItemAdapter (
             holder.itemView.imageViewRecyclerItem.setImageResource(0)
             holder.itemView.gifImageView.setImageResource(webShopItems[position].image)
         }
-
+    */
         holder.itemView.setOnClickListener { v ->
             val activity = v!!.context as AppCompatActivity
             val list: ArrayList<CommentItem> = ArrayList()
@@ -102,7 +104,7 @@ class WebShopItemAdapter (
                     "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt."
                 )
             )
-            val webShopItemFragment = WebShopItemDetailsFragment(webShopItems[position].title, webShopItems[position].id, webShopItems[position].image, list)
+            val webShopItemFragment = WebShopItemDetailsFragment(webShopItems[position].title, webShopItems[position].image, list)
             activity.supportFragmentManager.beginTransaction()
                 .replace(R.id.nav_host_fragment_activity_main, webShopItemFragment).addToBackStack(null).commit()
         }

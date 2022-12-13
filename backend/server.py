@@ -8,6 +8,7 @@ import uuid
 import subprocess
 import datetime
 import jwt
+import json
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET')
@@ -116,9 +117,8 @@ def get_users_list(current_user):
     for user in user_data:   
        user_data = {}   
        user_data['public_id'] = user.public_id  
-       user_data['name'] = user.name 
+       user_data['username'] = user.name 
        user_data['password'] = user.password
-       user_data['admin'] = user.admin
        user_data['email'] = user.email 
        result.append(user_data) 
 
@@ -215,20 +215,17 @@ def delete_comment(current_user, comment_id, user_id):
 
 @app.route("/request", methods=['POST'])
 @token_required
-def postRequest():
+def postRequest(self):
     f = request.files['file']
     file_path = os.path.join("gifs", secure_filename(f.filename))
     file_path_wo_ext = os.path.splitext(file_path)[0]
     f.save(file_path)
     files = os.listdir("gifs")
-    gifs = [file for file in files if file.endswith('.gif')]
 
     if os.path.exists(f'{file_path_wo_ext}.gif'):
         return jsonify({
-            'res': gifs,
             'status': '409',
-            'msg': 'Conflict: File already exists!',
-            'no_of_gifs': len(gifs)
+            'msg': 'Conflict: File already exists!'
         })
 
     try:
@@ -240,30 +237,34 @@ def postRequest():
             return jsonify({
                 'res': out.stderr,
                 'status': '400',
-                'msg': 'Can not parse CAFF!',
-                'no_of_gifs': len(gifs)
+                'msg': 'Can not parse CAFF!'
             })
         else:
             return jsonify({
-                'res': gifs,
                 'status': '200',
-                'msg': 'Success uploading caff!',
-                'no_of_gifs': len(gifs)
+                'msg': 'Success uploading caff!'
             })
     except Exception as e:
         os.remove(file_path)
         return jsonify({
             'res': e,
             'status': '400',
-            'msg': 'Can not parse CAFF!',
-            'no_of_gifs': len(gifs)
+            'msg': 'Can not parse CAFF!'
         })
 
 @app.route("/request/list", methods=['GET'])
 @token_required
 def getRequest(self):
     files = os.listdir("gifs")
-    gifs = [file for file in files if file.endswith('.gif')]
+    gifs = []
+    for f in files:
+        if f.endswith('.gif'):
+            gif = {'image': f, 'title': ''}
+            file_json = os.path.splitext(f)[0]+'.json'
+            with open ('gifs/'+ file_json) as file:
+                data = json.load(file)
+                gif['title'] = data['caption']
+            gifs.append(gif)
     return jsonify({
         'res': gifs,
         'status': '200',
@@ -272,7 +273,7 @@ def getRequest(self):
     })
 
 @app.route("/request/<caff>", methods=['GET'])
-@token_required
+##@token_required
 def getRequestCaff(caff):
     return send_file(f'gifs/{caff}')
 
