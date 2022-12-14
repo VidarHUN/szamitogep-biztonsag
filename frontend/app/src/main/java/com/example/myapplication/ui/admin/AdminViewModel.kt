@@ -1,7 +1,10 @@
 package com.example.myapplication.ui.admin
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +16,7 @@ import com.google.gson.Gson
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.Executors
 
 class AdminViewModel : ViewModel() {
     var usersList: ArrayList<UserItem> = ArrayList()
@@ -22,15 +26,14 @@ class AdminViewModel : ViewModel() {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(view.context)
 
-        Log.e("userselem", usersList.size.toString())
-
-
         getUsersData().start()
         Thread.sleep(1000)
+
         val userItemAdapter = UserItemAdapter(usersList)
-         Log.e("setutan", usersList.size.toString())
         recyclerView.adapter = userItemAdapter
+
     }
+
 
     private fun getUsersData(): Thread {
         return Thread {
@@ -54,12 +57,10 @@ class AdminViewModel : ViewModel() {
                 val inputStreamReader = InputStreamReader(inputSystem, "UTF-8")
                 val response = Gson().fromJson(inputStreamReader, UsersList::class.java)
                 usersList = response.users
-                Log.e("Inthread", usersList.size.toString())
                 inputStreamReader.close()
                 inputSystem.close()
-            } else if (connection.responseCode == 403) {
-
             }
+
         }
     }
 }

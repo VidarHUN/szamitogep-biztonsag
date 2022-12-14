@@ -54,7 +54,7 @@ def token_required(f):
         except:
             return make_response('Unauthorized',  401,
                         {'Authentication': '"Token is invalid"'})
-
+        print("DFASZ, Token")
         return f(current_user, *args, **kwargs)
     return decorator
 
@@ -273,8 +273,8 @@ def getRequest(self):
     })
 
 @app.route("/request/<caff>", methods=['GET'])
-##@token_required
-def getRequestCaff(caff):
+@token_required
+def getRequestCaff(current_user,caff):
     return send_file(f'gifs/{caff}')
 
 @app.route("/request/<caff>/meta", methods=['GET'])

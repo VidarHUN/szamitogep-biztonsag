@@ -23,6 +23,7 @@ import com.example.myapplication.ui.webshop.webshopitemdetails.commentadapter.Co
 import com.example.myapplication.ui.webshop.webshoplistitems.CaffList
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.recycler_item_caff.view.*
+import java.io.BufferedInputStream
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -59,6 +60,29 @@ class WebShopItemAdapter (
 
         executor.execute {
 
+            val url = URL("http://192.168.1.93/request/"+webShopItems[position].image)
+            val connection = url.openConnection() as HttpURLConnection
+            connection.setRequestProperty(
+                "Content-Type",
+                "application/json"
+            ) // The format of the content we're sending to the server
+
+            connection.setRequestProperty("x-access-tokens", SignInActivity.token)
+            connection.doInput = true
+
+            if (connection.responseCode == 200) {
+
+                val inputSystem = connection.inputStream
+                val inputStreamReader = InputStreamReader(inputSystem, "UTF-8")
+                image =BitmapFactory.decodeStream(inputSystem)
+                inputStreamReader.close()
+                inputSystem.close()
+            }
+
+            handler.post{
+                imageView.setImageBitmap(image)
+            }
+            /*
             var url: String = "http://192.168.1.93/request/"+webShopItems[position].image
             // Tries to get the image and post it in the ImageView
             // with the help of Handler
@@ -78,22 +102,14 @@ class WebShopItemAdapter (
             // image or any other kind of failure
             catch (e: Exception) {
                 e.printStackTrace()
-            }
+            }*/
         }
+
 
         activity.runOnUiThread( Runnable (){
             holder.itemView.gifImageView.setImageBitmap(image)
         })
 
-     /*   if(value.string.takeLast(3) == "jpg" || value.string.takeLast(3) == "png"){
-            holder.itemView.imageViewRecyclerItem.setImageResource(webShopItems[position].image)
-            holder.itemView.gifImageView.setImageResource(0)
-        }
-        else if(value.string.takeLast(3) == "gif"){
-            holder.itemView.imageViewRecyclerItem.setImageResource(0)
-            holder.itemView.gifImageView.setImageResource(webShopItems[position].image)
-        }
-    */
         holder.itemView.setOnClickListener { v ->
             val activity = v!!.context as AppCompatActivity
             val list: ArrayList<CommentItem> = ArrayList()
