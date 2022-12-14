@@ -4,6 +4,7 @@
 #include "parser.hpp"
 #include "../../extern/gif-h/gif.h"
 #include "getopt.h"
+#include <filesystem>
 
 using namespace std;
 using json = nlohmann::json_abi_v3_11_2::json;
@@ -36,7 +37,7 @@ namespace metadata
         string rawname = name.substr(0, lastindex);
         string s = j.dump();
         ofstream meta(rawname + ".json", ios::out);
-        meta << s;
+        meta << s << endl;
         meta.close();
     }
 
@@ -104,10 +105,10 @@ int main(int argc, char **argv)
         switch (opt)
         {
         case 'f':
-            caffname = string(optarg);
+            caffname = string((const char *)optarg, (size_t)50);
             break;
         case 'o':
-            outGIF = string(optarg);
+            outGIF = string((const char *)optarg, (size_t)50);
             break;
         case '?':
             return 1;
@@ -118,7 +119,11 @@ int main(int argc, char **argv)
 
     try
     {
-        caff.open(caffname.c_str(), ios::in | ios::out | ios::binary);
+        if (filesystem::is_symlink(caffname.c_str()))
+            throw ParserException("Symlink detected.");
+        if (strcmp(filesystem::path(caffname.c_str()).extension().c_str(), ".caff"))
+            throw ParserException("Not valid file format.");
+        caff.open(caffname.c_str(), ios::binary);
         CAFFParser parser;
         ParsedInfo info = parser.parse_file(&caff);
         gen_output(info, outGIF);

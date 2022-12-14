@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include "json.hpp"
 
+#define STORAGE_MAX (__UINT64_C(31457280)) // 30 MB
+
 struct ParsedInfo
 {
     CaffHeader caff_header;

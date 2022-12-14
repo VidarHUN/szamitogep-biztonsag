@@ -190,6 +190,8 @@ CaffAnimation *CAFFParser::parse_animation(char *bytes, uint64_t blk_len, int nu
         delete animation;
         throw e;
     }
+    if (animation->header->content_size > STORAGE_MAX || animation->header->content_size < 0)
+        throw ParserException("Content size specified is out of bounds");
     char *img = new char[animation->header->content_size];
     memcpy(img, bytes + 8 + animation->header->header_size, animation->header->content_size);
     animation->img = img;
