@@ -104,7 +104,7 @@ class ProfileSettingsFragment : Fragment() {
     private fun getData(): Thread {
         return Thread {
 
-            val url = URL("http://192.168.1.93/users")
+            val url = URL("http://192.168.1.70/users")
             val connection = url.openConnection() as HttpURLConnection
             connection.setRequestProperty(
                 "Content-Type",
@@ -136,7 +136,7 @@ class ProfileSettingsFragment : Fragment() {
 
     private fun deleteUser(): Thread {
         return Thread {
-            val url = URL("http://192.168.1.93/users/")
+            val url = URL("http://192.168.1.70/users/")
             val connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "DELETE"
             connection.setRequestProperty(
@@ -172,7 +172,7 @@ class ProfileSettingsFragment : Fragment() {
 
             val jsonObjectString = jsonObject.toString()
 
-            val url = URL("http://192.168.1.93/users/modify")
+            val url = URL("http://192.168.1.70/users/modify")
             val connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "PUT"
             connection.setRequestProperty(

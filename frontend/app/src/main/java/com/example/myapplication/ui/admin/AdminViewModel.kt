@@ -38,7 +38,7 @@ class AdminViewModel : ViewModel() {
     private fun getUsersData(): Thread {
         return Thread {
 
-            val url = URL("http://192.168.1.93/users/list")
+            val url = URL("http://192.168.1.70/users/list")
             val connection = url.openConnection() as HttpURLConnection
             connection.setRequestProperty(
                 "Content-Type",

@@ -58,7 +58,7 @@ class SignUpActivity : AppCompatActivity() {
 
             val jsonObjectString = jsonObject.toString()
 
-            val url = URL("http://192.168.1.93/users/register")
+            val url = URL("http://192.168.1.70/users/register")
             val connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "POST"
             connection.setRequestProperty(

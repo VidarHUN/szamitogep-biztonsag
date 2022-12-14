@@ -54,7 +54,7 @@ class WebShopItemDetailsFragment(var title: String, var image: String, var comme
         var imageBit: Bitmap? = null
 
         executor.execute {
-            val url = URL("http://192.168.1.93/request/"+image)
+            val url = URL("http://192.168.1.70/request/"+image)
             val connection = url.openConnection() as HttpURLConnection
             connection.setRequestProperty(
                 "Content-Type",
@@ -77,7 +77,7 @@ class WebShopItemDetailsFragment(var title: String, var image: String, var comme
                 imageView.setImageBitmap(imageBit)
             }
             /*
-            var url: String = "http://192.168.1.93/request/"+image
+            var url: String = "http://192.168.1.70/request/"+image
             // Tries to get the image and post it in the ImageView
             // with the help of Handler
             try {

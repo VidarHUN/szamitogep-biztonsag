@@ -36,7 +36,7 @@ class ProfileCheckFragment : Fragment() {
     private fun getData(): Thread {
         return Thread {
 
-            val url = URL("http://192.168.1.93/users")
+            val url = URL("http://192.168.1.70/users")
             val connection = url.openConnection() as HttpURLConnection
             connection.setRequestProperty(
                 "Content-Type",

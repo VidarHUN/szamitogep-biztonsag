@@ -1,28 +1,20 @@
 package com.example.myapplication.ui.upload
 
+import android.app.Activity
 import android.app.Activity.RESULT_OK
-import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.OpenableColumns
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.core.content.ContentResolverCompat
-import androidx.core.content.ContentResolverCompat.query
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.example.myapplication.auth.SignInActivity
 import com.example.myapplication.databinding.FragmentUploadBinding
-import com.example.myapplication.ui.webshop.webshoplistitems.CaffList
-import com.google.gson.Gson
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileInputStream
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
+import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -61,7 +53,8 @@ class UploadFragment : Fragment() {
     private fun pickFileFromDevice(){
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "*/*" // Allow the user to select any file type
-        startActivityForResult(intent, SELECT_FILE_REQUEST_CODE)
+        this.resultLauncher(intent)
+        resultLauncher(intent)
     }
 
 
@@ -96,9 +89,15 @@ class UploadFragment : Fragment() {
 
     private fun uploadCaff(file: Uri?): Thread {
         return Thread {
+            Log.e("InThread", "Start")
+            val attachmentName = "3"
+            val attachmentFileName = "3.caff"
+            val crlf = "\r\n"
+            val twoHyphens = "--"
+
             val boundary = "Boundary-${System.currentTimeMillis()}"
 
-            val url = URL("http://192.168.1.93/request")
+            val url = URL("http://192.168.1.70/request")
             val connection = url.openConnection() as HttpURLConnection
             connection.addRequestProperty(
                 "Content-Type",
@@ -108,32 +107,54 @@ class UploadFragment : Fragment() {
             connection.doInput = true
             connection.doOutput = true
 
-            val outputStreamToRequestBody = connection.outputStream
-            val httpRequestBodyWriter = BufferedWriter(OutputStreamWriter(outputStreamToRequestBody))
+//            val outputStreamToRequestBody = connection.outputStream
+//            val httpRequestBodyWriter = BufferedWriter(OutputStreamWriter(outputStreamToRequestBody))
+//
+//            httpRequestBodyWriter.write("\n--$boundary\n")
+//            httpRequestBodyWriter.write("Content-Disposition: form-data;"
+//                    + "name=\"file\";"
+//                    + "filename=\"" + "3.caff"  + "\""
+//                    + "\nContent-Type: application/octet-stream\n\n")
+//            httpRequestBodyWriter.flush()
 
-            httpRequestBodyWriter.write("\n--$boundary\n")
-            httpRequestBodyWriter.write("Content-Disposition: form-data;"
-                    + "name=\"file\";"
-                    + "filename=\"" + "2.caff"  + "\""
-                    + "\nContent-Type: application/octet-stream\n\n")
-            httpRequestBodyWriter.flush()
+            val request = DataOutputStream(
+                connection.getOutputStream()
+            )
+
+            Log.e("InThread", "getoutput")
+
+            request.writeBytes(twoHyphens + boundary + crlf)
+            request.writeBytes(
+                "Content-Disposition: form-data; name=\"" +
+                        attachmentName + "\";filename=\"" +
+                        attachmentFileName + "\"" + crlf
+            )
+            request.writeBytes(crlf)
 
             // Write the file
-            val inputStreamToFile = FileInputStream(file?.getPath() ?: null)
+            Log.e("File", "File")
+            val inputStreamToFile = FileInputStream(file?.path ?: null)
             var bytesRead: Int
             val dataBuffer = ByteArray(1024)
             while (inputStreamToFile.read(dataBuffer).also { bytesRead = it } != -1) {
-                outputStreamToRequestBody.write(dataBuffer, 0, bytesRead)
+                request.write(dataBuffer, 0, bytesRead)
             }
-            outputStreamToRequestBody.flush()
+            request.writeBytes(crlf);
+            request.writeBytes(twoHyphens + boundary +
+                    twoHyphens + crlf);
+
+            request.flush()
+            request.close()
+
+            Log.e("File", dataBuffer.size.toString())
 
             // End of the multipart request
-            httpRequestBodyWriter.write("\n--$boundary--\n")
-            httpRequestBodyWriter.flush()
+//            httpRequestBodyWriter.write("\n--$boundary--\n")
+//            httpRequestBodyWriter.flush()
 
             // Close the streams
-            outputStreamToRequestBody.close()
-            httpRequestBodyWriter.close()
+//            outputStreamToRequestBody.close()
+//            httpRequestBodyWriter.close()
 
             if (connection.responseCode == 200) {
 

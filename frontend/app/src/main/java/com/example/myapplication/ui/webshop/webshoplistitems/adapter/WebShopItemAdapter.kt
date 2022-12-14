@@ -60,7 +60,7 @@ class WebShopItemAdapter (
 
         executor.execute {
 
-            val url = URL("http://192.168.1.93/request/"+webShopItems[position].image)
+            val url = URL("http://192.168.1.70/request/"+webShopItems[position].image)
             val connection = url.openConnection() as HttpURLConnection
             connection.setRequestProperty(
                 "Content-Type",
@@ -83,7 +83,7 @@ class WebShopItemAdapter (
                 imageView.setImageBitmap(image)
             }
             /*
-            var url: String = "http://192.168.1.93/request/"+webShopItems[position].image
+            var url: String = "http://192.168.1.70/request/"+webShopItems[position].image
             // Tries to get the image and post it in the ImageView
             // with the help of Handler
             try {

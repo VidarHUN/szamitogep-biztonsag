@@ -46,7 +46,7 @@ class WebShopViewModel : ViewModel() {
     private fun getGifs(): Thread {
         return Thread {
 
-            val url = URL("http://192.168.1.93/request/list")
+            val url = URL("http://192.168.1.70/request/list")
             val connection = url.openConnection() as HttpURLConnection
             connection.setRequestProperty(
                 "Content-Type",
