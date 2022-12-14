@@ -1,7 +1,7 @@
 parser: parser.o main.cpp
-	g++ main.cpp parser.o -o ../parser -std=c++14 -O3
+	g++ main.cpp parser.o -o ../parser -std=c++17 -O3
 	rm *.o
 
 parser.o: parser.cpp parser.hpp
-	g++ -c parser.cpp -std=c++14 -O3
+	g++ -c parser.cpp -std=c++17 -O3
 
